@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>vm</title>
+</head>
+<body>
+<table style="withd:600px" border="1">
+    <caption><b>vm</b></caption>
+    <tr>
+        <th>名称</th>
+        <th>CPU</th>
+        <th>内存</th>
+        <th>状态</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="domain:${domains}">
+        <th th:value="${domain.name}"></th>
+        <th th:value="${domain.CPU}"></th>
+        <th th:value="${domain.memory}"></th>
+        <th th:value="${domain.state}"></th>
+        <th>
+            <input type="button" onclick="shutdown(${domain.id})">SHUTDOWN</input>
+            <input type="button" onclick="">CONSOLE</input>
+        </th>
+    </tr>
+</table>
+</body>
+<script>
+    function shutdown(id) {
+        var domain = {};
+        domain.id = id;
+        $.ajax({
+            async: false,
+            type : 'POST',
+            url : '/vm/allControl?shutdown',
+            data : domain,
+            dataType : 'json',
+            success : function(result) {
+                alert('关闭成功')
+            },
+            error : function(result) {
+                alert('关闭失败');
+            }
+        });
+    }
+
+    function console(id) {
+        var domain = {};
+        domain.id = id;
+        $.ajax({
+            async: false,
+            type : 'POST',
+            url : '/vm/allControl?console',
+            data : domain,
+            dataType : 'json',
+            success : function(result) {
+                alert('连接成功')
+            },
+            error : function(result) {
+                alert('连接失败');
+            }
+        });
+    }
+</script>
+</html>

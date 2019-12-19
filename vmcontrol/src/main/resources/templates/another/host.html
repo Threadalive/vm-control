@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>host</title>
+</head>
+<body>
+<form id="form1">
+    <div class="select-list">
+        <ul>
+            <li>
+                主机名:
+                <input name="hostName" th:value="${unit.hostName}" placeholder="XXX" type="text" disabled>
+            </li>
+            <li>
+                架构:
+                <input name="arth" th:value="${unit.arth}" placeholder="XXX" type="text" disabled>
+            </li>
+            <li>
+                CPU数:
+                <input name="CPUNum" th:value="${unit.CPUName}" placeholder="XXX" type="text" disabled>
+            </li>
+            <li>
+                内存/MB:
+                <input name="memory" th:value="${unit.memory}" placeholder="XXX" type="text" disabled>
+            </li>
+            <li>
+                虚拟化类型:
+                <input name="type" th:value="${unit.type}" placeholder="XXX" type="text" disabled>
+            </li>
+        </ul>
+    </div>
+</form>
+</body>
+</html>
