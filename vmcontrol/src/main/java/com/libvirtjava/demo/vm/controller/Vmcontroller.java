@@ -1,7 +1,9 @@
 package com.libvirtjava.demo.vm.controller;
 
 import com.libvirtjava.demo.vm.domain.Host;
+import com.libvirtjava.demo.vm.domain.VmParms;
 import com.libvirtjava.demo.vm.service.HostService;
+import com.libvirtjava.demo.vm.service.VmService;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -25,6 +28,9 @@ public class Vmcontroller {
 
     @Autowired
     HostService hostService;
+
+    @Autowired
+    VmService vmService;
 
     @GetMapping(params = "host")
     public String host(ModelMap modelMap) {
@@ -55,6 +61,11 @@ public class Vmcontroller {
 //        modelMap.put("unit", host);
         closeConn(connect);
         return "another/vm";
+    }
+
+    @PostMapping(params = "/createVm")
+    public void createVm(VmParms vmParms){
+        vmService.createVm(vmParms,connect);
     }
 
     public Connect getConn() {
