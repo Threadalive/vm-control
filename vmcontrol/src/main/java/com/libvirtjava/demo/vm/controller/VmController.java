@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @Description TODO
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/vm/allControl")
-public class Vmcontroller {
+public class VmController {
 
-    //静态私有成员变量
+    /**
+     * 静态私有成员变量
+     */
     private static volatile Connect connect;
 
 
@@ -116,8 +119,17 @@ public class Vmcontroller {
      * 获取一个链接
      */
     @PostMapping(params = "getConn")
-    public void getConn() {
-        connect = SingletonConnection.getInstance(connect);
+    @ResponseBody
+    public String getConn() {
+        String result = null;
+        try {
+            connect = SingletonConnection.getInstance(connect);
+            result = "succeed";
+        } catch (Exception e) {
+            result = "fail";
+            System.out.println(e);
+        }
+        return result;
     }
 
     /**
@@ -126,12 +138,18 @@ public class Vmcontroller {
      * @param connect 连接对象
      */
     @PostMapping(params = "closeConn")
-    public void closeConn(Connect connect) {
+    @ResponseBody
+    public String closeConn(Connect connect) {
+        String result = null;
         try {
             connect.close();
+            result = "succeed";
         } catch (LibvirtException e1) {
-            e1.printStackTrace();
+            result = "fail";
+            System.out.println(e1);
         }
+
+        return result;
     }
 
 //    public void getInfo() {
