@@ -1,13 +1,12 @@
 package com.libvirtjava.demo.vm.controller;
 
+import com.libvirtjava.demo.vm.util.SingletonConnection;
 import com.libvirtjava.demo.vm.domain.Host;
 import com.libvirtjava.demo.vm.domain.VmParms;
 import com.libvirtjava.demo.vm.service.HostService;
 import com.libvirtjava.demo.vm.service.VmService;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
-import org.libvirt.StoragePool;
-import org.libvirt.StorageVol;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,60 +23,109 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/vm/allControl")
 public class Vmcontroller {
 
-    Connect connect = null;
+    //静态私有成员变量
+    private static volatile Connect connect;
 
+
+    /**
+     * 主机信息操作服务
+     */
     @Autowired
     HostService hostService;
 
+    /**
+     * 虚拟机信息操作服务
+     */
     @Autowired
     VmService vmService;
 
+    /**
+     * @param modelMap 模型对象
+     * @return 返回主机信息页面
+     */
     @GetMapping(params = "host")
     public String host(ModelMap modelMap) {
-        connect = getConn();
         Host host = hostService.getHost(connect);
-        try {
-            String hostName = connect.getHostName();
-            host.setHostName(hostName);
-        } catch (LibvirtException e) {
-            e.printStackTrace();
-        }
 
-        modelMap.put("unit", host);
-        closeConn(connect);
-        return "another/host";
+        modelMap.put("hostMsg", host);
+
+        return "kvm/host";
     }
 
+    /**
+     * 虚拟机信息列表
+     *
+     * @param modelMap 模型
+     * @return 虚拟机列表页
+     */
     @GetMapping(params = "Vm")
     public String vm(ModelMap modelMap) {
-        connect = getConn();
-//        Host host = hostService;
-        try {
-            String hostName = connect.getHostName();
-        } catch (LibvirtException e) {
-            e.printStackTrace();
-        }
+        modelMap.put("isoVolList", vmService.listIsoVolumes(connect));
+        modelMap.put("isoStoList", vmService.listStoragePools(connect));
 
-//        modelMap.put("unit", host);
-        closeConn(connect);
-        return "another/vm";
+        return "kvm/vm";
     }
 
-    @PostMapping(params = "/createVm")
-    public void createVm(VmParms vmParms){
-        vmService.createVm(vmParms,connect);
+    /**
+     * 启动虚拟机
+     *
+     * @param uuid    虚拟机id
+     * @param connect 连接对象
+     * @return 0 -1
+     */
+    @PostMapping(params = "startVm")
+    public int startVm(String uuid, Connect connect) {
+        return vmService.startVm(uuid, connect);
     }
 
-    public Connect getConn() {
-        try {
-            connect = new Connect("qemu+ssh://root@192.168.157.134/system", false);
-        } catch (LibvirtException e) {
-            System.out.println("exception caught:" + e);
-            System.out.println(e.getError());
-        }
-        return connect;
+    /**
+     * 关闭虚拟机
+     *
+     * @param uuid    虚拟机id
+     * @param connect 连接对象
+     * @return 0 -1
+     */
+    @PostMapping(params = "stopVm")
+    public int stopVm(String uuid, Connect connect) {
+        return vmService.stopVm(uuid, connect);
     }
 
+    /**
+     * 创建一个虚拟机
+     *
+     * @param vmParms 给定虚拟机参数列表
+     */
+    @PostMapping(params = "createVm")
+    public void createVm(VmParms vmParms) {
+        vmService.createVm(vmParms, connect);
+    }
+
+    /**
+     * 删除虚拟机
+     *
+     * @param vmUuid     虚拟机id
+     * @param deleteDisk 是否删除磁盘
+     * @return 0 -1
+     */
+    @PostMapping(params = "deleteVm")
+    public int startVm(String vmUuid, boolean deleteDisk) {
+        return vmService.deleteVm(vmUuid, deleteDisk, connect);
+    }
+
+    /**
+     * 获取一个链接
+     */
+    @PostMapping(params = "getConn")
+    public void getConn() {
+        connect = SingletonConnection.getInstance(connect);
+    }
+
+    /**
+     * 关闭连接
+     *
+     * @param connect 连接对象
+     */
+    @PostMapping(params = "closeConn")
     public void closeConn(Connect connect) {
         try {
             connect.close();
@@ -86,30 +134,30 @@ public class Vmcontroller {
         }
     }
 
-    public void getInfo() {
-        try {
-
-            // 获得inactive状态的虚拟机数量
-            System.out.println("numOfDefinedDomains:" + connect.numOfDefinedDomains());
-            // 获得inactive状态的虚拟机列表，返回值是String[],虚拟机名称的数组
-            System.out.println("listDefinedDomains:" + connect.listDefinedDomains());
-
-            for (int c : connect.listDomains()) {
-                System.out.println("  ->" + c);
-            }
-
-            for (String c : connect.listStoragePools()) {
-                StoragePool po = connect.storagePoolLookupByName(c);
-                for (String v : po.listVolumes()) {
-                    StorageVol vol = po.storageVolLookupByName(v);
-                    System.out.println("‐‐‐‐> " + vol.getName());
-                    System.out.println("‐‐‐‐‐‐‐> " + vol.getPath());
-                }
-            }
-        } catch (LibvirtException e) {
-            System.out.println("exception caught:" + e);
-            System.out.println(e.getError());
-        }
-    }
+//    public void getInfo() {
+//        try {
+//
+//            // 获得inactive状态的虚拟机数量
+//            System.out.println("numOfDefinedDomains:" + connect.numOfDefinedDomains());
+//            // 获得inactive状态的虚拟机列表，返回值是String[],虚拟机名称的数组
+//            System.out.println("listDefinedDomains:" + connect.listDefinedDomains());
+//
+//            for (int c : connect.listDomains()) {
+//                System.out.println("  ->" + c);
+//            }
+//
+//            for (String c : connect.listStoragePools()) {
+//                StoragePool po = connect.storagePoolLookupByName(c);
+//                for (String v : po.listVolumes()) {
+//                    StorageVol vol = po.storageVolLookupByName(v);
+//                    System.out.println("‐‐‐‐> " + vol.getName());
+//                    System.out.println("‐‐‐‐‐‐‐> " + vol.getPath());
+//                }
+//            }
+//        } catch (LibvirtException e) {
+//            System.out.println("exception caught:" + e);
+//            System.out.println(e.getError());
+//        }
+//    }
 
 }

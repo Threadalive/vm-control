@@ -4,6 +4,7 @@ import com.libvirtjava.demo.vm.domain.Host;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.libvirt.NodeInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,15 +15,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class HostService {
 
+    @Autowired
+    private VmService vmService;
+
+
+    /**
+     * 获取主机信息
+     * @param connect 连接对象
+     * @return 主机对象
+     */
     public Host getHost(Connect connect){
         Host host = new Host();
         try {
+            //获取主机架构信息
             NodeInfo nodeInfo = connect.nodeInfo();
             host.setHostName(connect.getHostName());
             host.setArth(nodeInfo.model);
-            host.setMemory(nodeInfo.memory);
+            host.setMemory(nodeInfo.memory>>10);
             host.setNumOfCpu(nodeInfo.cpus);
             host.setType(connect.getType());
+            host.setDomainList(vmService.getDomainList(connect));
+
         } catch (LibvirtException e) {
             e.printStackTrace();
         }

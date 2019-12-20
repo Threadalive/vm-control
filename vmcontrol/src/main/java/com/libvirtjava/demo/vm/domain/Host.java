@@ -1,5 +1,8 @@
 package com.libvirtjava.demo.vm.domain;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Description TODO
  * @Author zhenxing.dong
@@ -11,6 +14,7 @@ public class Host {
     private Integer numOfCpu;
     private Long memory;
     private String type;
+    private List<Map<String,Object>> domainList;
 
     public String getHostName() {
         return hostName;
@@ -50,5 +54,13 @@ public class Host {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<Map<String, Object>> getDomainList() {
+        return domainList;
+    }
+
+    public void setDomainList(List<Map<String, Object>> domainList) {
+        this.domainList = domainList;
     }
 }
