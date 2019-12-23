@@ -5,6 +5,8 @@ import com.libvirtjava.demo.vm.domain.Host;
 import com.libvirtjava.demo.vm.domain.VmParms;
 import com.libvirtjava.demo.vm.service.HostService;
 import com.libvirtjava.demo.vm.service.VmService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +44,12 @@ public class VmController {
     @Autowired
     VmService vmService;
 
+
     /**
      * @param modelMap 模型对象
      * @return 返回主机信息页面
      */
+//    @RequiresRoles("admin")
     @GetMapping(params = "host")
     public String host(ModelMap modelMap) {
         Host host = hostService.getHost(connect);

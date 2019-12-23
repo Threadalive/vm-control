@@ -108,7 +108,7 @@ public class VmService {
      * 显示当前镜像
      *
      * @param connect 连接
-     * @return Map<卷名       ，       卷路径>
+     * @return Map<卷名，卷路径>
      */
     public Map<String, String> listIsoVolumes(Connect connect) {
         Map<String, String> isos = new HashMap();

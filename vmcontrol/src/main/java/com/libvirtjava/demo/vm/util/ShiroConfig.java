@@ -1,13 +1,19 @@
 package com.libvirtjava.demo.vm.util;
 
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @Description TODO
@@ -55,6 +61,33 @@ public class ShiroConfig {
         return shiroFilterFactoryBean;
     }
 
+    /**
+     * md5加密
+     * @return
+     */
+    @Bean
+    public HashedCredentialsMatcher hashedCredentialsMatcher(){
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        //加密方式
+        hashedCredentialsMatcher.setHashAlgorithmName("md5");
+        //加密次数
+        hashedCredentialsMatcher.setHashIterations(2);
+        return hashedCredentialsMatcher;
+    }
+
+    /**
+     *  开启shiro aop注解支持.
+     *  使用代理方式;所以需要开启代码支持;
+     * @param securityManager 安全管理器
+     * @return
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager){
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+    }
+
     @Bean
     public MyShiroRealm myShiroRealm(){
         MyShiroRealm myShiroRealm = new MyShiroRealm();
@@ -67,5 +100,31 @@ public class ShiroConfig {
         DefaultWebSecurityManager securityManager =  new DefaultWebSecurityManager();
         securityManager.setRealm(myShiroRealm());
         return securityManager;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAAP = new DefaultAdvisorAutoProxyCreator();
+        defaultAAP.setProxyTargetClass(true);
+        return defaultAAP;
+    }
+
+    @Bean(name="simpleMappingExceptionResolver")
+    public SimpleMappingExceptionResolver createSimpleMappingExceptionResolver() {
+        SimpleMappingExceptionResolver r = new SimpleMappingExceptionResolver();
+        Properties mappings = new Properties();
+        //数据库异常处理
+        mappings.setProperty("DatabaseException", "databaseError");
+        mappings.setProperty("UnauthorizedException","403");
+        // None by default
+        r.setExceptionMappings(mappings);
+        // No default
+//        r.setDefaultErrorView("error");
+        // Default is "exception"
+        r.setExceptionAttribute("ex");
+
+        //r.setWarnLogCategory("example.MvcLogger");     // No default
+        return r;
     }
 }

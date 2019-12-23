@@ -45,12 +45,8 @@ public class UserInfo implements Serializable {
      */
     private byte state;
 
-    /**
-     * 立即从数据库中进行加载数据;
-     */
     @ManyToMany(fetch= FetchType.EAGER)
     @JoinTable(name = "SysUserRole", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
-
     /**
      * 一个用户具有多个角色
      */
@@ -110,5 +106,12 @@ public class UserInfo implements Serializable {
 
     public void setRoleList(List<SysRole> roleList) {
         this.roleList = roleList;
+    }
+    /**
+     * 密码盐.
+     * @return
+     */
+    public String getCredentialsSalt(){
+        return this.username+this.salt;
     }
 }
