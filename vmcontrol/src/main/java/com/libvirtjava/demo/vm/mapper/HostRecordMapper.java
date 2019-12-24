@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author zhenxing.dong
  */
 public interface HostRecordMapper extends JpaRepository<HostRecord,String> {
-    HostRecord findFirstByOrOrderByHid();
+    HostRecord findFirstByOrderByHid();
 }

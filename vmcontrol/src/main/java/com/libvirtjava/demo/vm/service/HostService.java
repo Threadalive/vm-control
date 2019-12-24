@@ -50,6 +50,6 @@ public class HostService {
      * @return
      */
     public HostRecord getRandomHost(){
-        return hostRecordMapper.findFirstByOrOrderByHid();
+        return hostRecordMapper.findFirstByOrderByHid();
     }
 }

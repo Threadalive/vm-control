@@ -14,7 +14,7 @@ import java.util.List;
  * @return
  * @author zhenxing.dong
  */
-public interface NodeMapper extends JpaRepository<Node,Integer> {
+public interface NodeMapper extends JpaRepository<Node,String> {
 
     List<Node> findByParentIdAndStatus(String parentId, int status);
 
@@ -23,7 +23,6 @@ public interface NodeMapper extends JpaRepository<Node,Integer> {
     Node findByVmIdAndStatus(String vmId,int status);
 
     @Modifying
-    @Query("UPDATE Node n set n.parentId =:  where n.id =: id")
+    @Query("UPDATE Node n set n.parentId =: parentId where n.id =: id")
     void update(@Param(value = "parentId") String parentId, @Param(value = "id")String id);
-
 }

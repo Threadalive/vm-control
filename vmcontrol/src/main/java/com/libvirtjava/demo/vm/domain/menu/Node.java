@@ -12,7 +12,7 @@ import java.util.List;
  * @Date 2019/12/24 00:07
  */
 @Entity
-@Table(name = "cluster")
+@Table(name = "node")
 public class Node {
 
     public static final int STATUS_DISABLED = 0;
