@@ -11,7 +11,7 @@
  Target Server Version : 80015
  File Encoding         : 65001
 
- Date: 24/12/2019 13:57:29
+ Date: 24/12/2019 17:23:55
 */
 
 SET NAMES utf8mb4;
@@ -55,14 +55,15 @@ CREATE TABLE `host_record` (
 -- ----------------------------
 DROP TABLE IF EXISTS `node`;
 CREATE TABLE `node` (
-  `id` int(11) NOT NULL COMMENT '唯一标识',
+  `id` varchar(11) NOT NULL COMMENT '唯一标识',
   `cluster_id` varchar(255) DEFAULT NULL,
   `host_id` varchar(255) DEFAULT NULL,
   `node_desc` varchar(1000) NOT NULL COMMENT '结点描述',
   `noder_name` varchar(255) NOT NULL COMMENT '结点名称',
-  `parent_id` int(11) DEFAULT NULL COMMENT '父ID',
+  `parent_id` varchar(11) DEFAULT NULL COMMENT '父ID',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态（1：可用，0：禁用）',
   `vm_id` varchar(255) DEFAULT NULL,
+  `node_name` varchar(255) NOT NULL COMMENT '结点名称',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
