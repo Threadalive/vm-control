@@ -10,6 +10,8 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class MyShiroRealm extends AuthorizingRealm {
 
     /**
-     * 用户登录次数计数  redisKey 前缀
+     * 用户登录次数计数 redisKey 前缀
      */
     private String SHIRO_LOGIN_COUNT = "shiro_login_count_";
 
@@ -37,6 +39,8 @@ public class MyShiroRealm extends AuthorizingRealm {
      * 最大尝试次数3
      */
     private Integer MAX_RETRY_COUNT = 3;
+
+    private static Logger LOGGER = LoggerFactory.getLogger(MyShiroRealm.class);
 
     @Autowired
     private UserInfoService userInfoService;
@@ -77,7 +81,6 @@ public class MyShiroRealm extends AuthorizingRealm {
             throw new DisabledAccountException("由于密码输入错误次数大于3次，5分钟后再次尝试！");
         }
 
-
         UserInfo userInfo = userInfoService.getUserInfo(userName);
 
         if(userInfo == null){
@@ -93,7 +96,7 @@ public class MyShiroRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         }else if (!pwd.equals(userInfo.getPassword())) {
             //如果密码错误
-            System.out.println(pwd);
+            LOGGER.info(pwd);
             throw new IncorrectCredentialsException();
         }else {
             //清除登录次数记录

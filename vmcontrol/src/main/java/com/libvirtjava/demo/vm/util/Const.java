@@ -6,6 +6,12 @@ package com.libvirtjava.demo.vm.util;
  * @Date 2019/12/19 15:42
  */
 public class Const {
+    public static final String SUCCEED = "succeed";
+
+    public static final String FAIL = "fail";
+
+    public static String MSG = "msg";
+
     public static String XMLDESC = "<domain type=\"kvm\">\n" +
             "    <name>%s</name>  <!--虚拟机名称-->\n" +
             "    <memory unit=\"MiB\">%d</memory>   <!--最大内存 -->\n" +

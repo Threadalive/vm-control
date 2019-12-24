@@ -168,19 +168,19 @@ public class VmService {
      * @return Map<卷名，卷路径>
      */
     public Map<String, String> listIsoVolumes(Connect connect) {
-        Map<String, String> isos = new HashMap();
+        Map<String, String> isos = new HashMap(16);
         try {
-            for (String c : connect.listStoragePools()) {
-                StoragePool po = connect.storagePoolLookupByName(c);
-                for (String v : po.listVolumes()) {
-                    StorageVol vol = po.storageVolLookupByName(v);
+            for (String spName : connect.listStoragePools()) {
+                StoragePool po = connect.storagePoolLookupByName(spName);
+                for (String vName : po.listVolumes()) {
+                    StorageVol vol = po.storageVolLookupByName(vName);
                     if (vol.getName().endsWith(".iso")) {
                         isos.put(vol.getName(), vol.getPath());
                     }
                 }
             }
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("获取iso卷列表出错",e);
         }
         return isos;
     }
@@ -192,12 +192,13 @@ public class VmService {
      * @return 存储池名数组
      */
     public String[] listStoragePools(Connect connect) {
+        String[] storagePools = null;
         try {
-            return connect.listStoragePools();
+            storagePools = connect.listStoragePools();
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("获取存储池字符串列表出错",e);
         }
-        return null;
+        return storagePools;
     }
 
     /**

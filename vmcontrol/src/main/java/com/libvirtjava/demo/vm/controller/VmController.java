@@ -3,6 +3,7 @@ package com.libvirtjava.demo.vm.controller;
 import com.libvirtjava.demo.vm.domain.menu.Node;
 import com.libvirtjava.demo.vm.mapper.NodeMapper;
 import com.libvirtjava.demo.vm.service.MenuService;
+import com.libvirtjava.demo.vm.util.Const;
 import com.libvirtjava.demo.vm.util.SingletonConnection;
 import com.libvirtjava.demo.vm.domain.vm.Host;
 import com.libvirtjava.demo.vm.domain.vm.VmParms;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description TODO
@@ -76,30 +78,50 @@ public class VmController {
     }
 
     /**
-     * 虚拟机信息列表
+     * iso卷信息列表
      *
-     * @param modelMap 模型
-     * @return 虚拟机列表页
+     * @return 结果集<"isoVolList",Map<卷名，卷路径>>
      */
-    @GetMapping(params = "Vm")
-    public String vm(ModelMap modelMap) {
-        modelMap.put("isoVolList", vmService.listIsoVolumes(connect));
-        modelMap.put("isoStoList", vmService.listStoragePools(connect));
+    @PostMapping(params = "getIsoMsg")
+    @ResponseBody
+    public HashMap<String, Map<String,String>> isoMsg() {
+        HashMap<String, Map<String,String>> resultMap = new HashMap<>(1);
+        resultMap.put("isoVolList", vmService.listIsoVolumes(connect));
+        return resultMap;
+    }
 
-        return "kvm/vm";
+    /**
+     * 获取存储池名数组
+     *
+     * @return 结果集<"isoVolList",Map<卷名，卷路径>>
+     */
+    @PostMapping(params = "getStoragePoolsMsg")
+    @ResponseBody
+    public HashMap<String, String[]> spsMsg() {
+        HashMap<String, String[]> resultMap = new HashMap<>(1);
+        resultMap.put("spsNameList", vmService.listStoragePools(connect));
+        return resultMap;
     }
 
     /**
      * 启动虚拟机
      *
-     * @param uuid  虚拟机id
+     * @param uuid    虚拟机id
      * @param connect 连接对象
      * @return 0 -1
      */
     @PostMapping(params = "startVm")
     @ResponseBody
-    public int startVm(String uuid, Connect connect) {
-        return vmService.startVm(uuid, connect);
+    public HashMap<String, String> startVm(String uuid, Connect connect) {
+        HashMap<String, String> resultMap = new HashMap<>(1);
+
+        int result = vmService.startVm(uuid, connect);
+        if (result == 0) {
+            resultMap.put(Const.MSG, Const.SUCCEED);
+        }else {
+            resultMap.put(Const.MSG, Const.FAIL);
+        }
+        return resultMap;
     }
 
     /**
@@ -111,8 +133,16 @@ public class VmController {
      */
     @PostMapping(params = "stopVm")
     @ResponseBody
-    public int stopVm(String uuid, Connect connect) {
-        return vmService.stopVm(uuid, connect);
+    public HashMap<String, String> stopVm(String uuid, Connect connect) {
+        HashMap<String, String> resultMap = new HashMap<>(1);
+
+        int result = vmService.stopVm(uuid, connect);
+        if (result == 0) {
+            resultMap.put(Const.MSG, Const.SUCCEED);
+        }else {
+            resultMap.put(Const.MSG, Const.FAIL);
+        }
+        return resultMap;
     }
 
     /**
@@ -122,8 +152,15 @@ public class VmController {
      */
     @PostMapping(params = "createVm")
     @ResponseBody
-    public void createVm(VmParms vmParms) {
-        vmService.createVm(vmParms, connect);
+    public HashMap<String, String> createVm(VmParms vmParms) {
+        HashMap<String, String> resultMap = new HashMap<>(1);
+        int result = vmService.createVm(vmParms, connect);
+        if (result == 0) {
+            resultMap.put(Const.MSG, Const.SUCCEED);
+        }else {
+            resultMap.put(Const.MSG, Const.FAIL);
+        }
+        return resultMap;
     }
 
     /**
@@ -135,8 +172,17 @@ public class VmController {
      */
     @PostMapping(params = "deleteVm")
     @ResponseBody
-    public int startVm(String vmUuid, boolean deleteDisk) {
-        return vmService.deleteVm(vmUuid, deleteDisk, connect);
+    public HashMap<String, String> deleteVm(String vmUuid, boolean deleteDisk) {
+        HashMap<String, String> resultMap = new HashMap<>(1);
+
+        int result = vmService.deleteVm(vmUuid, deleteDisk, connect);
+
+        if (result == 0) {
+            resultMap.put(Const.MSG, Const.SUCCEED);
+        }else {
+            resultMap.put(Const.MSG, Const.FAIL);
+        }
+        return resultMap;
     }
 
     /**
@@ -144,16 +190,16 @@ public class VmController {
      */
     @PostMapping(params = "getConn")
     @ResponseBody
-    public String getConn() {
-        String result = null;
+    public HashMap<String, String> getConn() {
+        HashMap<String, String> resultMap = new HashMap<>(1);
         try {
             connect = SingletonConnection.getInstance(connect);
-            result = "succeed";
+            resultMap.put(Const.MSG, Const.SUCCEED);
         } catch (Exception e) {
-            result = "fail";
-            LOGGER.info("{}",e);
+            resultMap.put(Const.MSG, Const.FAIL);
+            LOGGER.info("{}", e);
         }
-        return result;
+        return resultMap;
     }
 
     /**
@@ -163,32 +209,31 @@ public class VmController {
      */
     @PostMapping(params = "closeConn")
     @ResponseBody
-    public String closeConn(Connect connect) {
-        String result = null;
+    public HashMap<String, String> closeConn(Connect connect) {
+        HashMap<String, String> resultMap = new HashMap<>(1);
         try {
             connect.close();
-            result = "succeed";
+            resultMap.put(Const.MSG, Const.SUCCEED);
         } catch (LibvirtException e) {
-            result = "fail";
-            LOGGER.info("{}",e);
+            resultMap.put(Const.MSG, Const.FAIL);
+            LOGGER.info("{}", e);
         }
-        return result;
+        return resultMap;
     }
 
     @PostMapping(params = "getTree")
     @ResponseBody
-    public HashMap<String,List<Node>> getTree(Node node) {
-        HashMap<String,List<Node>> resultMap = new HashMap<>(1);
+    public HashMap<String, List<Node>> getTree(Node node) {
+        HashMap<String, List<Node>> resultMap = new HashMap<>(1);
         List<Node> nodeList = new ArrayList<>();
         if (node.getParentId() == null) {
             nodeList = nodeMapper.findByStatus(Node.STATUS_ENABLED);
-        }else if("1".equals(node.getParentId())){
+        } else if ("1".equals(node.getParentId())) {
             nodeList = menuService.getHostAndVmList(node);
-        }else {
+        } else {
             nodeList = menuService.getVmList(node);
         }
-        resultMap.put("list",nodeList);
-
+        resultMap.put("list", nodeList);
         return resultMap;
     }
 }

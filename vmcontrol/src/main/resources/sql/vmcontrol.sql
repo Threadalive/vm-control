@@ -11,7 +11,7 @@
  Target Server Version : 80015
  File Encoding         : 65001
 
- Date: 24/12/2019 09:26:17
+ Date: 24/12/2019 13:57:29
 */
 
 SET NAMES utf8mb4;
@@ -33,6 +33,38 @@ INSERT INTO `hibernate_sequence` VALUES (1);
 INSERT INTO `hibernate_sequence` VALUES (1);
 INSERT INTO `hibernate_sequence` VALUES (1);
 COMMIT;
+
+-- ----------------------------
+-- Table structure for host_record
+-- ----------------------------
+DROP TABLE IF EXISTS `host_record`;
+CREATE TABLE `host_record` (
+  `hid` varchar(255) NOT NULL,
+  `cpu_num` int(11) DEFAULT NULL,
+  `host_desc` varchar(255) DEFAULT NULL,
+  `host_name` varchar(255) DEFAULT NULL,
+  `ip_addr` varchar(255) DEFAULT NULL,
+  `mem_size` int(11) DEFAULT NULL,
+  `mem_used` int(11) DEFAULT NULL,
+  `pwd` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`hid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for node
+-- ----------------------------
+DROP TABLE IF EXISTS `node`;
+CREATE TABLE `node` (
+  `id` int(11) NOT NULL COMMENT '唯一标识',
+  `cluster_id` varchar(255) DEFAULT NULL,
+  `host_id` varchar(255) DEFAULT NULL,
+  `node_desc` varchar(1000) NOT NULL COMMENT '结点描述',
+  `noder_name` varchar(255) NOT NULL COMMENT '结点名称',
+  `parent_id` int(11) DEFAULT NULL COMMENT '父ID',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态（1：可用，0：禁用）',
+  `vm_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_permission
@@ -140,5 +172,25 @@ CREATE TABLE `user_info` (
 BEGIN;
 INSERT INTO `user_info` VALUES (1, '管理员', '123456', '8d78869f470951332959580424d4bf4f', 0, 'admin');
 COMMIT;
+
+-- ----------------------------
+-- Table structure for vm_record
+-- ----------------------------
+DROP TABLE IF EXISTS `vm_record`;
+CREATE TABLE `vm_record` (
+  `vm_id` varchar(255) NOT NULL,
+  `cpu_num` int(11) DEFAULT NULL,
+  `cpu_used` int(11) DEFAULT NULL,
+  `disk_size` bigint(20) DEFAULT NULL,
+  `ios` varchar(255) DEFAULT NULL,
+  `mem_size` bigint(20) DEFAULT NULL,
+  `mem_used` int(11) DEFAULT NULL,
+  `os` varchar(255) DEFAULT NULL,
+  `states` int(11) DEFAULT NULL,
+  `storage_path` varchar(255) DEFAULT NULL,
+  `vm_desc` varchar(255) DEFAULT NULL,
+  `vm_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`vm_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;

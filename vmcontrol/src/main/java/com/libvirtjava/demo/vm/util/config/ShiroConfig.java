@@ -34,6 +34,7 @@ public class ShiroConfig {
         System.out.println("ShiroConfiguration.shirFilter()");
 
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
         Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
@@ -44,14 +45,17 @@ public class ShiroConfig {
         //配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/logout", "logout");
 
+        //开放登陆接口
+        filterChainDefinitionMap.put("/login", "anon");
+
         //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
         filterChainDefinitionMap.put("/**", "authc");
 
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.html"页面
-        shiroFilterFactoryBean.setLoginUrl("/login");
+//        shiroFilterFactoryBean.setLoginUrl("/login");
 
         // 登录成功后要跳转的链接
-        shiroFilterFactoryBean.setSuccessUrl("/index");
+//        shiroFilterFactoryBean.setSuccessUrl("/index");
 
         //未授权界面;
         shiroFilterFactoryBean.setUnauthorizedUrl("/403");
@@ -91,6 +95,9 @@ public class ShiroConfig {
     @Bean
     public MyShiroRealm myShiroRealm(){
         MyShiroRealm myShiroRealm = new MyShiroRealm();
+        // 将md5密码比对器传给realm
+        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+
         return myShiroRealm;
     }
 
