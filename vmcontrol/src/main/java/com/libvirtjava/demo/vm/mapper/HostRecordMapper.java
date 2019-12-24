@@ -1,7 +1,8 @@
 package com.libvirtjava.demo.vm.mapper;
 
 import com.libvirtjava.demo.vm.domain.menu.HostRecord;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+
 
 /**
  *
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @return
  * @author zhenxing.dong
  */
-public interface HostRecordMapper extends JpaRepository<HostRecord,String> {
+public interface HostRecordMapper extends CrudRepository<HostRecord,String> {
     HostRecord findFirstByOrderByHid();
+
 }

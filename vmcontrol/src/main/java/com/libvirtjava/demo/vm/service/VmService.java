@@ -3,6 +3,7 @@ package com.libvirtjava.demo.vm.service;
 import com.libvirtjava.demo.vm.domain.menu.HostRecord;
 import com.libvirtjava.demo.vm.domain.menu.Node;
 import com.libvirtjava.demo.vm.domain.menu.VmRecord;
+import com.libvirtjava.demo.vm.mapper.HostRecordMapper;
 import com.libvirtjava.demo.vm.mapper.NodeMapper;
 import com.libvirtjava.demo.vm.mapper.VmRecordMapper;
 import com.libvirtjava.demo.vm.util.Const;
@@ -40,7 +41,7 @@ public class VmService {
     private NodeMapper nodeMapper;
 
     @Autowired
-    private HostService hostService;
+    private HostRecordMapper hostRecordMapper;
 
     private Logger LOGGER = LoggerFactory.getLogger(VmService.class);
     /**
@@ -58,7 +59,7 @@ public class VmService {
             dom.create();
             if (dom.isActive() == 1) {
                 Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
-                HostRecord rHostRecord = hostService.getRandomHost();
+                HostRecord rHostRecord = hostRecordMapper.findFirstByOrderByHid();
                 //更新父目录id
                 nodeMapper.update(rHostRecord.getHid(), node.getId());
             }
@@ -87,7 +88,7 @@ public class VmService {
                 nodeMapper.update(node.getClusterId(), node.getId());
             }
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
             return -1;
         }
         return 0;
@@ -120,7 +121,7 @@ public class VmService {
 
             node.setId(UUID.randomUUID().toString());
             node.setVmId(domain.getUUIDString());
-            node.setStatus(1);
+            node.setStatus(Node.STATUS_ENABLED);
             node.setNoderName(domain.getName());
             node.setClusterId(vmParms.getClusterToBelong());
             //若未激活
@@ -238,7 +239,7 @@ public class VmService {
                 domains.add(convertDomainInfo(conn.domainLookupByID(acDomId)));
             }
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
         }
         return domains;
     }
@@ -251,6 +252,7 @@ public class VmService {
      * @param connect    连接对象
      * @return 0:删除成功 -1:删除失败
      */
+    @Transactional(rollbackFor = Exception.class)
     public int deleteVm(String vmUuid, boolean deleteDisk, Connect connect) {
         Domain dom;
         try {
@@ -282,15 +284,19 @@ public class VmService {
                 }
             }
             dom.undefine();
+            //删除结点表中的记录
+            Node node = nodeMapper.findByVmIdAndStatus(vmUuid,Node.STATUS_ENABLED);
+            nodeMapper.delete(node);
+
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
             return -1;
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
         } catch (SAXException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
         }
         return 0;
     }

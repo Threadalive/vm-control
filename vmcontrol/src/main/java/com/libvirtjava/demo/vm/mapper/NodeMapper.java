@@ -18,9 +18,14 @@ public interface NodeMapper extends JpaRepository<Node,String> {
 
     List<Node> findByParentIdAndStatus(String parentId, int status);
 
-    List<Node> findByStatus(int status);
-
     Node findByVmIdAndStatus(String vmId,int status);
+
+    Node findByNodeNameAndStatus(String nodeName,int status);
+
+    Node findByHostIdAndStatus(String hostId,int status);
+
+    @Query("select n from Node n where n.parentId = ?1")
+    List<Node> getClusterList(String parentId);
 
     @Modifying
     @Query("UPDATE Node n set n.parentId =: parentId where n.id =: id")

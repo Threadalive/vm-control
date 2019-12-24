@@ -21,7 +21,6 @@ public class HostRecord {
     private String pwd;
     private Integer memUsed;
 
-
     public String getHid() {
         return hid;
     }

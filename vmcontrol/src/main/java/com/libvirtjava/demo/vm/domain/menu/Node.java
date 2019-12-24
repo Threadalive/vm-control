@@ -20,7 +20,7 @@ public class Node {
     public static final int STATUS_ENABLED = 1;
 
 
-    @Column(nullable = false, columnDefinition="int COMMENT '唯一标识'")
+    @Column(nullable = false, columnDefinition="varchar(255) COMMENT '唯一标识'")
     @Id
     private String id;
 
@@ -34,7 +34,7 @@ public class Node {
     private String clusterId;
 
     @Column(nullable = false, columnDefinition = "varchar(255) COMMENT '结点名称'")
-    private String noderName;
+    private String nodeName;
 
     @Column(nullable = false, columnDefinition = "varchar(1000) COMMENT '结点描述'")
     private String nodeDesc;
@@ -42,7 +42,7 @@ public class Node {
     @Column(nullable = false, columnDefinition = "tinyint(1) DEFAULT 1 COMMENT '状态（1：可用，0：禁用）'")
     private Integer status;
 
-    @Column(columnDefinition = "int COMMENT '父ID'")
+    @Column(columnDefinition = "varchar(255) COMMENT '父ID'")
     private String parentId;
 
 
@@ -91,11 +91,11 @@ public class Node {
     }
 
     public String getNoderName() {
-        return noderName;
+        return nodeName;
     }
 
     public void setNoderName(String noderName) {
-        this.noderName = noderName;
+        this.nodeName = noderName;
     }
 
     public String getNodeDesc() {
