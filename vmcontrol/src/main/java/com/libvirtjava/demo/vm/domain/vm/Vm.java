@@ -1,4 +1,4 @@
-package com.libvirtjava.demo.vm.domain;
+package com.libvirtjava.demo.vm.domain.vm;
 
 /**
  * @Description TODO

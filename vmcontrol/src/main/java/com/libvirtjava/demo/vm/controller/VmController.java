@@ -1,14 +1,18 @@
 package com.libvirtjava.demo.vm.controller;
 
+import com.libvirtjava.demo.vm.domain.menu.Cluster;
+import com.libvirtjava.demo.vm.domain.menu.ClusterVo;
+import com.libvirtjava.demo.vm.mapper.ClusterMapper;
 import com.libvirtjava.demo.vm.util.SingletonConnection;
-import com.libvirtjava.demo.vm.domain.Host;
-import com.libvirtjava.demo.vm.domain.VmParms;
+import com.libvirtjava.demo.vm.domain.vm.Host;
+import com.libvirtjava.demo.vm.domain.vm.VmParms;
 import com.libvirtjava.demo.vm.service.HostService;
 import com.libvirtjava.demo.vm.service.VmService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.commons.beanutils.BeanUtils;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * @Description TODO
@@ -31,7 +37,13 @@ public class VmController {
      */
     private static volatile Connect connect;
 
+    /**
+     * 日志
+     */
+    private Logger LOGGER = LoggerFactory.getLogger(VmController.class);
 
+    @Autowired
+    private ClusterMapper clusterMapper;
     /**
      * 主机信息操作服务
      */
@@ -76,11 +88,12 @@ public class VmController {
     /**
      * 启动虚拟机
      *
-     * @param uuid    虚拟机id
+     * @param uuid  虚拟机id
      * @param connect 连接对象
      * @return 0 -1
      */
     @PostMapping(params = "startVm")
+    @ResponseBody
     public int startVm(String uuid, Connect connect) {
         return vmService.startVm(uuid, connect);
     }
@@ -93,6 +106,7 @@ public class VmController {
      * @return 0 -1
      */
     @PostMapping(params = "stopVm")
+    @ResponseBody
     public int stopVm(String uuid, Connect connect) {
         return vmService.stopVm(uuid, connect);
     }
@@ -103,6 +117,7 @@ public class VmController {
      * @param vmParms 给定虚拟机参数列表
      */
     @PostMapping(params = "createVm")
+    @ResponseBody
     public void createVm(VmParms vmParms) {
         vmService.createVm(vmParms, connect);
     }
@@ -115,6 +130,7 @@ public class VmController {
      * @return 0 -1
      */
     @PostMapping(params = "deleteVm")
+    @ResponseBody
     public int startVm(String vmUuid, boolean deleteDisk) {
         return vmService.deleteVm(vmUuid, deleteDisk, connect);
     }
@@ -131,7 +147,7 @@ public class VmController {
             result = "succeed";
         } catch (Exception e) {
             result = "fail";
-            System.out.println(e);
+            LOGGER.info("{}",e);
         }
         return result;
     }
@@ -148,38 +164,20 @@ public class VmController {
         try {
             connect.close();
             result = "succeed";
-        } catch (LibvirtException e1) {
+        } catch (LibvirtException e) {
             result = "fail";
-            System.out.println(e1);
+            LOGGER.info("{}",e);
         }
-
         return result;
     }
 
-//    public void getInfo() {
-//        try {
-//
-//            // 获得inactive状态的虚拟机数量
-//            System.out.println("numOfDefinedDomains:" + connect.numOfDefinedDomains());
-//            // 获得inactive状态的虚拟机列表，返回值是String[],虚拟机名称的数组
-//            System.out.println("listDefinedDomains:" + connect.listDefinedDomains());
-//
-//            for (int c : connect.listDomains()) {
-//                System.out.println("  ->" + c);
-//            }
-//
-//            for (String c : connect.listStoragePools()) {
-//                StoragePool po = connect.storagePoolLookupByName(c);
-//                for (String v : po.listVolumes()) {
-//                    StorageVol vol = po.storageVolLookupByName(v);
-//                    System.out.println("‐‐‐‐> " + vol.getName());
-//                    System.out.println("‐‐‐‐‐‐‐> " + vol.getPath());
-//                }
-//            }
-//        } catch (LibvirtException e) {
-//            System.out.println("exception caught:" + e);
-//            System.out.println(e.getError());
-//        }
-//    }
+    @PostMapping(params = "getTree")
+    @ResponseBody
+    public List<ClusterVo> getTree(int parentId) {
+        if (parentId == 0) {
+            List<Cluster> clusterList = clusterMapper.findByStatus(Cluster.STATUS_ENABLED);
+        }
 
+
+    }
 }

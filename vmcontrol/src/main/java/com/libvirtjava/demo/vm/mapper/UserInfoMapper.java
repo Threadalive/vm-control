@@ -1,6 +1,6 @@
 package com.libvirtjava.demo.vm.mapper;
 
-import com.libvirtjava.demo.vm.domain.UserInfo;
+import com.libvirtjava.demo.vm.domain.user.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

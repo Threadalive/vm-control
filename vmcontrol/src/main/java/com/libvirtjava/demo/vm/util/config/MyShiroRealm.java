@@ -1,8 +1,8 @@
-package com.libvirtjava.demo.vm.util;
+package com.libvirtjava.demo.vm.util.config;
 
-import com.libvirtjava.demo.vm.domain.SysPermission;
-import com.libvirtjava.demo.vm.domain.SysRole;
-import com.libvirtjava.demo.vm.domain.UserInfo;
+import com.libvirtjava.demo.vm.domain.user.SysPermission;
+import com.libvirtjava.demo.vm.domain.user.SysRole;
+import com.libvirtjava.demo.vm.domain.user.UserInfo;
 import com.libvirtjava.demo.vm.service.UserInfoService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -71,6 +71,7 @@ public class MyShiroRealm extends AuthorizingRealm {
             //锁定，5分钟后过期
             opsForValue.set(SHIRO_IS_LOCK+userName, "LOCK");
             stringRedisTemplate.expire(SHIRO_IS_LOCK+userName, 5, TimeUnit.MINUTES);
+            stringRedisTemplate.expire(SHIRO_LOGIN_COUNT+userName, 5, TimeUnit.MINUTES);
         }
         if ("LOCK".equals(opsForValue.get(SHIRO_IS_LOCK+userName))){
             throw new DisabledAccountException("由于密码输入错误次数大于3次，5分钟后再次尝试！");
@@ -109,6 +110,8 @@ public class MyShiroRealm extends AuthorizingRealm {
         //如果身份认证验证成功，返回一个AuthenticationInfo实现；
         return authenticationInfo;
     }
+
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 

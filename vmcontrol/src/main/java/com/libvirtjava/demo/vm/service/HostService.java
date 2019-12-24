@@ -1,6 +1,6 @@
 package com.libvirtjava.demo.vm.service;
 
-import com.libvirtjava.demo.vm.domain.Host;
+import com.libvirtjava.demo.vm.domain.vm.Host;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.libvirt.NodeInfo;

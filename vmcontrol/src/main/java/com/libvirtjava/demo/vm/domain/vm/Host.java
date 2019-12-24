@@ -1,4 +1,4 @@
-package com.libvirtjava.demo.vm.domain;
+package com.libvirtjava.demo.vm.domain.vm;
 
 import java.util.List;
 import java.util.Map;

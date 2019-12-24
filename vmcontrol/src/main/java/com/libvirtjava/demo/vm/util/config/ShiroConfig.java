@@ -1,4 +1,4 @@
-package com.libvirtjava.demo.vm.util;
+package com.libvirtjava.demo.vm.util.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;

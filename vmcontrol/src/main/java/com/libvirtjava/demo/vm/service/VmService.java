@@ -2,7 +2,7 @@ package com.libvirtjava.demo.vm.service;
 
 import com.libvirtjava.demo.vm.util.Const;
 import com.libvirtjava.demo.vm.util.MydomainState;
-import com.libvirtjava.demo.vm.domain.VmParms;
+import com.libvirtjava.demo.vm.domain.vm.VmParms;
 import org.libvirt.*;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
