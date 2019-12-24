@@ -182,7 +182,7 @@ public class VmController {
         List<Node> nodeList = new ArrayList<>();
         if (node.getParentId() == null) {
             nodeList = nodeMapper.findByStatus(Node.STATUS_ENABLED);
-        }else if(node.getParentId() == 1){
+        }else if("1".equals(node.getParentId())){
             nodeList = menuService.getHostAndVmList(node);
         }else {
             nodeList = menuService.getVmList(node);
