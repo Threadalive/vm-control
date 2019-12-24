@@ -1,6 +1,8 @@
 package com.libvirtjava.demo.vm.service;
 
-import com.libvirtjava.demo.vm.domain.menu.ClusterVo;
+import com.libvirtjava.demo.vm.domain.menu.Node;
+import com.libvirtjava.demo.vm.mapper.NodeMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,26 +17,17 @@ import java.util.Map;
  */
 @Service
 public class MenuService {
+    @Autowired
+    private NodeMapper nodeMapper;
 
-    private List<ClusterVo> getTree(List<ClusterVo> list) {
-
-        Map<Integer, ClusterVo> dtoMap = new HashMap<>();
-        for (ClusterVo node : list) {
-            dtoMap.put(node.getId(), node);
-        }
-        List<ClusterVo> resultList = new ArrayList<>();
-        for (Map.Entry<Integer, ClusterVo> entry : dtoMap.entrySet()) {
-            ClusterVo node = entry.getValue();
-            if (node.getParentId() == null) {
-                // 如果是顶层节点，直接添加到结果集合中
-                resultList.add(node);
-            } else {
-                // 如果不是顶层节点，找其父节点，并且添加到父节点的子节点集合中
-                if (dtoMap.get(Long.valueOf(node.getParentId())) != null) {
-                    dtoMap.get(Long.valueOf(node.getParentId())).getChildren().add(node);
-                }
-            }
-        }
-        return resultList;
+    public List<Node> getHostAndVmList(Node node){
+        List<Node> nodeList = new ArrayList<>();
+            nodeList = nodeMapper.findByParentIdAndStatus(node.getParentId(),Node.STATUS_ENABLED);
+        return nodeList;
     }
+
+    public List<Node> getVmList(Node node){
+        List<Node> nodeList = new ArrayList<>();
+            nodeList = nodeMapper.findByParentIdAndStatus(node.getParentId(),Node.STATUS_ENABLED);
+        return nodeList;    }
 }

@@ -9,6 +9,7 @@ import java.util.Map;
  * @Date 2019/12/18 10:52
  */
 public class Host {
+    
     private String hostName;
     private String arth;
     private Integer numOfCpu;

@@ -1,14 +1,13 @@
 package com.libvirtjava.demo.vm.controller;
 
-import com.libvirtjava.demo.vm.domain.menu.Cluster;
-import com.libvirtjava.demo.vm.domain.menu.ClusterVo;
-import com.libvirtjava.demo.vm.mapper.ClusterMapper;
+import com.libvirtjava.demo.vm.domain.menu.Node;
+import com.libvirtjava.demo.vm.mapper.NodeMapper;
+import com.libvirtjava.demo.vm.service.MenuService;
 import com.libvirtjava.demo.vm.util.SingletonConnection;
 import com.libvirtjava.demo.vm.domain.vm.Host;
 import com.libvirtjava.demo.vm.domain.vm.VmParms;
 import com.libvirtjava.demo.vm.service.HostService;
 import com.libvirtjava.demo.vm.service.VmService;
-import org.apache.commons.beanutils.BeanUtils;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.slf4j.Logger;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,7 +44,10 @@ public class VmController {
     private Logger LOGGER = LoggerFactory.getLogger(VmController.class);
 
     @Autowired
-    private ClusterMapper clusterMapper;
+    private NodeMapper nodeMapper;
+
+    @Autowired
+    private MenuService menuService;
     /**
      * 主机信息操作服务
      */
@@ -173,11 +177,18 @@ public class VmController {
 
     @PostMapping(params = "getTree")
     @ResponseBody
-    public List<ClusterVo> getTree(int parentId) {
-        if (parentId == 0) {
-            List<Cluster> clusterList = clusterMapper.findByStatus(Cluster.STATUS_ENABLED);
+    public HashMap<String,List<Node>> getTree(Node node) {
+        HashMap<String,List<Node>> resultMap = new HashMap<>(1);
+        List<Node> nodeList = new ArrayList<>();
+        if (node.getParentId() == null) {
+            nodeList = nodeMapper.findByStatus(Node.STATUS_ENABLED);
+        }else if(node.getParentId() == 1){
+            nodeList = menuService.getHostAndVmList(node);
+        }else {
+            nodeList = menuService.getVmList(node);
         }
+        resultMap.put("list",nodeList);
 
-
+        return resultMap;
     }
 }
