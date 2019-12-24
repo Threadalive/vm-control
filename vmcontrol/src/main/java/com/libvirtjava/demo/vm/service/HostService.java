@@ -1,6 +1,8 @@
 package com.libvirtjava.demo.vm.service;
 
+import com.libvirtjava.demo.vm.domain.menu.HostRecord;
 import com.libvirtjava.demo.vm.domain.vm.Host;
+import com.libvirtjava.demo.vm.mapper.HostRecordMapper;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.libvirt.NodeInfo;
@@ -18,7 +20,8 @@ public class HostService {
     @Autowired
     private VmService vmService;
 
-
+    @Autowired
+    private HostRecordMapper hostRecordMapper;
     /**
      * 获取主机信息
      * @param connect 连接对象
@@ -42,4 +45,11 @@ public class HostService {
         return host;
     }
 
+    /**
+     *
+     * @return
+     */
+    public HostRecord getRandomHost(){
+        return hostRecordMapper.findFirstByOrOrderByHid();
+    }
 }

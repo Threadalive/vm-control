@@ -1,10 +1,19 @@
 package com.libvirtjava.demo.vm.service;
 
+import com.libvirtjava.demo.vm.domain.menu.HostRecord;
+import com.libvirtjava.demo.vm.domain.menu.Node;
+import com.libvirtjava.demo.vm.domain.menu.VmRecord;
+import com.libvirtjava.demo.vm.mapper.NodeMapper;
+import com.libvirtjava.demo.vm.mapper.VmRecordMapper;
 import com.libvirtjava.demo.vm.util.Const;
 import com.libvirtjava.demo.vm.util.MydomainState;
 import com.libvirtjava.demo.vm.domain.vm.VmParms;
 import org.libvirt.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -14,10 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description vm操作
@@ -27,6 +33,16 @@ import java.util.Map;
 @Service
 public class VmService {
 
+    @Autowired
+    private VmRecordMapper vmRecordMapper;
+
+    @Autowired
+    private NodeMapper nodeMapper;
+
+    @Autowired
+    private HostService hostService;
+
+    private Logger LOGGER = LoggerFactory.getLogger(VmService.class);
     /**
      * 启动虚拟机
      *
@@ -34,11 +50,18 @@ public class VmService {
      * @param connect 连接对象
      * @return 0:启动成功 1:启动失败
      */
+    @Transactional(rollbackFor = Exception.class)
     public int startVm(String vmUuid, Connect connect) {
         Domain dom;
         try {
             dom = connect.domainLookupByUUIDString(vmUuid);
             dom.create();
+            if (dom.isActive() == 1) {
+                Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
+                HostRecord rHostRecord = hostService.getRandomHost();
+                //更新父目录id
+                nodeMapper.update(rHostRecord.getHid(), node.getId());
+            }
         } catch (LibvirtException e) {
             e.printStackTrace();
             return -1;
@@ -58,6 +81,11 @@ public class VmService {
         try {
             dom = connect.domainLookupByUUIDString(vmUuid);
             dom.destroy();
+            if(dom.isActive() != 1) {
+                //更新父目录id
+                Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
+                nodeMapper.update(node.getClusterId(), node.getId());
+            }
         } catch (LibvirtException e) {
             e.printStackTrace();
             return -1;
@@ -70,12 +98,41 @@ public class VmService {
      *
      * @param vmParms 虚拟机参数
      * @param connect 连接对象
-     * @return 0:关闭成功 1:关闭失败
+     * @return 0:创建成功 1:创建失败
      */
+    @Transactional(rollbackFor = Exception.class)
     public int createVm(VmParms vmParms, Connect connect) {
         String volPath = createDisk(vmParms.getSp(), vmParms.getName() + "_disk", vmParms.getDiskSize(), connect);
         try {
-            connect.domainDefineXML(String.format(Const.XMLDESC, vmParms.getName(), vmParms.getMem(), vmParms.getMem(), vmParms.getCpu(), volPath, vmParms.getIsopath()));
+            Domain domain = connect.domainDefineXML(String.format(Const.XMLDESC, vmParms.getName(), vmParms.getMem(), vmParms.getMem(), vmParms.getCpu(), volPath, vmParms.getIsopath()));
+            VmRecord vmRecord = new VmRecord();
+            Node node = new Node();
+
+            vmRecord.setVmId(domain.getUUIDString());
+            vmRecord.setCpuNum(vmParms.getCpu());
+            vmRecord.setDiskSize(vmParms.getDiskSize());
+            vmRecord.setMemSize(domain.getMaxMemory());
+            vmRecord.setIos(vmParms.getIsopath());
+            vmRecord.setVmName(vmParms.getName());
+            vmRecord.setStates(1);
+
+            vmRecordMapper.save(vmRecord);
+
+            node.setId(UUID.randomUUID().toString());
+            node.setVmId(domain.getUUIDString());
+            node.setStatus(1);
+            node.setNoderName(domain.getName());
+            node.setClusterId(vmParms.getClusterToBelong());
+            //若未激活
+            if (domain.isActive() == 0){
+                node.setParentId(vmParms.getClusterToBelong());
+            }else if (domain.isActive() == 1){
+                node.setParentId(vmParms.getHostToBelong());
+            }else {
+                LOGGER.error("虚拟机错误");
+            }
+            nodeMapper.save(node);
+
             return 0;
         } catch (LibvirtException e) {
             e.printStackTrace();

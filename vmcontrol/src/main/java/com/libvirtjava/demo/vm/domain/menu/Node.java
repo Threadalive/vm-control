@@ -22,12 +22,15 @@ public class Node {
 
     @Column(nullable = false, columnDefinition="int COMMENT '唯一标识'")
     @Id
-    private Integer id;
+    private String id;
 
     private String vmId;
 
     private String hostId;
 
+    /**
+     * 若为集群，则为集群本身id，否则为主机或虚拟机从属集群id
+     */
     private String clusterId;
 
     @Column(nullable = false, columnDefinition = "varchar(255) COMMENT '结点名称'")
@@ -39,11 +42,10 @@ public class Node {
     @Column(nullable = false, columnDefinition = "tinyint(1) DEFAULT 1 COMMENT '状态（1：可用，0：禁用）'")
     private Integer status;
 
-//    @Column(nullable = false, columnDefinition = "bigint(20) COMMENT '归属人ID'")
-//    private Long userId;
-
     @Column(columnDefinition = "int COMMENT '父ID'")
-    private Integer parentId;
+    private String parentId;
+
+
 
 //    private List<Node> childrens;
 
@@ -56,11 +58,11 @@ public class Node {
 //    }
 
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -112,11 +114,11 @@ public class Node {
         this.status = status;
     }
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 }

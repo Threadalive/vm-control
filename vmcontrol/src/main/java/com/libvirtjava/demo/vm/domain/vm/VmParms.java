@@ -13,6 +13,24 @@ public class VmParms {
     long diskSize;
     String isopath;
     String sp;
+    String clusterToBelong;
+    String hostToBelong;
+
+    public String getHostToBelong() {
+        return hostToBelong;
+    }
+
+    public void setHostToBelong(String hostToBelong) {
+        this.hostToBelong = hostToBelong;
+    }
+
+    public String getClusterToBelong() {
+        return clusterToBelong;
+    }
+
+    public void setClusterToBelong(String clusterToBelong) {
+        this.clusterToBelong = clusterToBelong;
+    }
 
     public String getName() {
         return name;
