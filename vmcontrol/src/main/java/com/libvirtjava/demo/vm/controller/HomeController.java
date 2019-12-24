@@ -27,10 +27,10 @@ public class HomeController {
      */
     private Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
-    @RequestMapping({"/","/index"})
-    public String index() {
-        return "/index";
-    }
+//    @RequestMapping({"/","/index"})
+//    public String index() {
+//        return "/index";
+//    }
 
     @RequestMapping(value = "/login")
     @ResponseBody
@@ -56,7 +56,9 @@ public class HomeController {
             } else if (DisabledAccountException.class.getName().equals(exception)){
                 LOGGER.info("DisabledAccount");
                 msg = "locked";
-            }else{
+            }else if (null != request.getSession().getAttribute("currentUser")){
+                msg = Const.SUCCEED;
+            }else {
                 msg = Const.FAIL;
                 LOGGER.info("error -- >" + exception);
             }
@@ -74,7 +76,7 @@ public class HomeController {
 
     /**
      * 未登录，shiro应重定向到登录界面，此处返回未登录状态信息由前端控制跳转页面
-     * @return
+     * @return 未登录
      */
     @RequestMapping(value = "/unauth")
     @ResponseBody
