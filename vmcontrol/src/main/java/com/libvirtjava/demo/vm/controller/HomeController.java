@@ -1,16 +1,18 @@
 package com.libvirtjava.demo.vm.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.libvirtjava.demo.vm.util.Const;
-import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ import java.util.Map;
  * @Date 2019/12/20 17:21
  */
 @Controller
+@RequestMapping(value = "/user")
 public class HomeController {
 
     /**
@@ -32,7 +35,34 @@ public class HomeController {
 //        return "/index";
 //    }
 
-    @RequestMapping(value = "/login")
+    @PostMapping("/login")
+    public JSONObject login(@RequestParam String userName, @RequestParam String password) {
+
+        LOGGER.info("进入登录");
+        Subject subject = SecurityUtils.getSubject();
+        JSONObject json = new JSONObject();
+        Session session = subject.getSession();
+        String sessionId = (String) session.getId();
+        json.put("sessionId", sessionId);
+        json.put(Const.MSG,Const.SUCCEED);
+        return json;
+    }
+
+    @PostMapping("/logout")
+    public void logout(){
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+
+        String sessionId = (String)session.getId();
+        if (!"".equals( session.getAttribute("currentUser"))){
+            session.setAttribute("currentUser","");
+        }
+        LOGGER.info("sessionId{}",sessionId);
+        LOGGER.info("已退出",sessionId);
+
+    }
+
+   /* @RequestMapping(value = "/login")
     @ResponseBody
     public Map<String,Object> login(HttpServletRequest request) throws Exception {
 
@@ -62,11 +92,13 @@ public class HomeController {
                 msg = Const.FAIL;
                 LOGGER.info("error -- >" + exception);
             }
+        }else {
+            msg = "unLog";
         }
         resultMap.put(Const.MSG, msg);
         // 此方法不处理登录成功,由shiro进行处理
         return resultMap;
-    }
+    }*/
 
     @RequestMapping("/403")
     public String unauthorizedRole(){

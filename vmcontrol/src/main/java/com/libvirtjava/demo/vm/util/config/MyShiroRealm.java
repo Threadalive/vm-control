@@ -87,7 +87,7 @@ public class MyShiroRealm extends AuthorizingRealm {
             return null;
         }else if("2".equals(userInfo.getState())){
             /**
-             * 如果用户的status为禁用。那么就抛出<code>DisabledAccountException
+             * 如果用户的status为禁用。那么就抛出DisabledAccountException
              */
             throw new DisabledAccountException("此帐号已经设置为禁止登录！");
         }
@@ -118,7 +118,7 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 
-        System.out.println("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
+        LOGGER.info("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
         //权限信息
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 
@@ -133,11 +133,11 @@ public class MyShiroRealm extends AuthorizingRealm {
         for(SysRole role:userInfo.getRoleList()){
             //添加角色信息
             authorizationInfo.addRole(role.getRole());
-            System.out.println(role.getRole());
+            LOGGER.info(role.getRole());
             for(SysPermission p:role.getPermissions()){
                 //添加权限信息
                 authorizationInfo.addStringPermission(p.getPermission());
-                System.out.println(p.getPermission());
+                LOGGER.info(p.getPermission());
             }
         }
             return authorizationInfo;

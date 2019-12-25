@@ -5,12 +5,15 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
+import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,6 +26,8 @@ import java.util.Properties;
 @Configuration
 public class ShiroConfig {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShiroConfig.class);
+
     /**
      * 设置过滤器工厂
      * @param securityManager 安全管理器
@@ -31,34 +36,36 @@ public class ShiroConfig {
     @Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
 
-        System.out.println("ShiroConfiguration.shirFilter()");
+        LOGGER.info("ShiroConfiguration.shirFilter()");
 
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
+        //注入自定义的过滤器
+        Map<String, Filter> map = new LinkedHashMap<String,Filter>();
+        map.put("authc",getFormAuthenticationFilter());
+
+        //配置过滤路径
         Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
 
         // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/static/**", "anon");
 
-        //配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
-        filterChainDefinitionMap.put("/logout", "logout");
 
-        //开放登陆接口
-        filterChainDefinitionMap.put("/login", "anon");
+        //配置退出过滤器,其中的具体的退出代码Shiro已经实现了
+//        filterChainDefinitionMap.put("/logout", "logout");
 
         //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
         filterChainDefinitionMap.put("/**", "authc");
 
-        // 如果不设置默认会自动寻找Web工程根目录下的"/login.html"页面
-//        shiroFilterFactoryBean.setLoginUrl("/login");
-
-        // 登录成功后要跳转的链接
-//        shiroFilterFactoryBean.setSuccessUrl("/index");
+        // 设置登录的接口
+        shiroFilterFactoryBean.setLoginUrl("user/login");
 
         //未授权界面;
-        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+//        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+
+        shiroFilterFactoryBean.setFilters(map);
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
@@ -103,10 +110,10 @@ public class ShiroConfig {
 
 
     @Bean
-    public SecurityManager securityManager(){
-        DefaultWebSecurityManager securityManager =  new DefaultWebSecurityManager();
-        securityManager.setRealm(myShiroRealm());
-        return securityManager;
+    SecurityManager securityManager() {
+        SecurityManager manager = new DefaultWebSecurityManager();
+        ((DefaultWebSecurityManager) manager).setRealm(myShiroRealm());
+        return manager;
     }
 
     @Bean
@@ -133,5 +140,13 @@ public class ShiroConfig {
 
         //r.setWarnLogCategory("example.MvcLogger");     // No default
         return r;
+    }
+
+    @Bean
+    CustomFormAuthenticationFilter getFormAuthenticationFilter(){
+
+        CustomFormAuthenticationFilter authenticating = new CustomFormAuthenticationFilter();
+
+        return authenticating;
     }
 }

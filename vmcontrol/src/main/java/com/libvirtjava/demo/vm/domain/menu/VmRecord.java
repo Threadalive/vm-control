@@ -2,6 +2,7 @@ package com.libvirtjava.demo.vm.domain.menu;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * @Description TODO
@@ -9,7 +10,7 @@ import javax.persistence.Id;
  * @Date 2019/12/24 10:05
  */
 @Entity
-public class VmRecord {
+public class VmRecord implements Serializable {
 
     @Id
     private String vmId;

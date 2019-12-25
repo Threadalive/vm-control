@@ -12,7 +12,6 @@ server:
     max-threads: 800
     # Tomcat启动初始化的线程数，默认值25
     min-spare-threads: 30
-
 spring:
   thymeleaf:
     prefix: classpath:/templates/
@@ -41,6 +40,11 @@ spring:
 user:
   password:
     maxRetryCount: 5
+
+logging:
+  level:
+    com: INFO
+  config: classpath:logback.xml
 
 ## Shiro
 #shiro:
@@ -75,3 +79,4 @@ user:
 #    maxSession: -1
 #    # 踢出之前登录的/之后登录的用户，默认踢出之前登录的用户
 #    kickoutAfter: false
+

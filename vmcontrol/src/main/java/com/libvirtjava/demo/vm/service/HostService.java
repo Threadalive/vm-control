@@ -129,7 +129,6 @@ public class HostService {
             Node hostNode = nodeMapper.findByHostIdAndStatus(hostRecord.getHid(), Node.STATUS_ENABLED);
 
             List<Node> vmList = nodeMapper.findByParentIdAndStatus(hostNode.getId(), Node.STATUS_ENABLED);
-
             for (Node n : vmList) {
                 //删除该虚拟机，以及在表中的记录
                 vmService.deleteVm(n.getVmId(), true, connect);
