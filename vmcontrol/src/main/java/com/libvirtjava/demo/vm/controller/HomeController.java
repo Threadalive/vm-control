@@ -34,7 +34,6 @@ public class HomeController {
 //    public String index() {
 //        return "/index";
 //    }
-
     @PostMapping("/login")
     public JSONObject login(@RequestParam String userName, @RequestParam String password) {
 
