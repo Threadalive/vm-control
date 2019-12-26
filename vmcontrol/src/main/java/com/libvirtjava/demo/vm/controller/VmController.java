@@ -189,9 +189,10 @@ public class VmController {
      */
     @PostMapping(params = "getConn")
     @ResponseBody
-    public HashMap<String, String> getConn() {
+    public HashMap<String, String> getConn(String hostAddr) {
         HashMap<String, String> resultMap = new HashMap<>(1);
         try {
+            SingletonConnection.setHostAddr(hostAddr);
             connect = SingletonConnection.getInstance(connect);
             resultMap.put(Const.MSG, Const.SUCCEED);
         } catch (Exception e) {

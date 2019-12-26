@@ -136,7 +136,7 @@ public class VmService {
 
             return 0;
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
         }
         return -1;
     }
