@@ -11,7 +11,7 @@
  Target Server Version : 80015
  File Encoding         : 65001
 
- Date: 24/12/2019 17:23:55
+ Date: 26/12/2019 14:38:27
 */
 
 SET NAMES utf8mb4;
@@ -51,21 +51,39 @@ CREATE TABLE `host_record` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of host_record
+-- ----------------------------
+BEGIN;
+INSERT INTO `host_record` VALUES ('c358d1c1-9f67-4b18-bb13-5bb1e385086a', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `host_record` VALUES ('e2af56fe-d026-4e70-b956-e3d6bb4a0234', NULL, '第一个主机结点', '主机一', NULL, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
 -- Table structure for node
 -- ----------------------------
 DROP TABLE IF EXISTS `node`;
 CREATE TABLE `node` (
-  `id` varchar(11) NOT NULL COMMENT '唯一标识',
+  `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一标识',
   `cluster_id` varchar(255) DEFAULT NULL,
   `host_id` varchar(255) DEFAULT NULL,
-  `node_desc` varchar(1000) NOT NULL COMMENT '结点描述',
-  `noder_name` varchar(255) NOT NULL COMMENT '结点名称',
-  `parent_id` varchar(11) DEFAULT NULL COMMENT '父ID',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态（1：可用，0：禁用）',
+  `node_desc` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '结点描述',
+  `parent_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '父ID',
+  `status` tinyint(1) DEFAULT '1' COMMENT '状态（1：可用，0：禁用）',
   `vm_id` varchar(255) DEFAULT NULL,
-  `node_name` varchar(255) NOT NULL COMMENT '结点名称',
+  `node_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '结点名称',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of node
+-- ----------------------------
+BEGIN;
+INSERT INTO `node` VALUES ('d441ec26-598e-4bd0-af50-a8d72057efa2', NULL, NULL, 'the first cluster node', '0', 1, NULL, '集群一');
+INSERT INTO `node` VALUES ('6a5f0814-8ffe-418f-890c-8ad7db63d9c8', NULL, NULL, 'the second cluster node', '0', 1, NULL, '集群二');
+INSERT INTO `node` VALUES ('14ddf6ab-43c6-4c20-9e9a-8a4b5a225712', NULL, NULL, 'the third cluster node', '0', 1, NULL, '集群三');
+INSERT INTO `node` VALUES ('1245fc3f-fa75-4355-8bd8-656e082b086d', 'd441ec26-598e-4bd0-af50-a8d72057efa2', 'ef9686e3-3b89-4b3f-84b8-cd93c0f0caad', NULL, 'd441ec26-598e-4bd0-af50-a8d72057efa2', 1, NULL, '主机一');
+INSERT INTO `node` VALUES ('fb3533f9-75f2-4ef0-b55c-0ef710db2b11', 'd441ec26-598e-4bd0-af50-a8d72057efa2', '18d29467-d950-4191-9a89-277f223e2491', NULL, 'd441ec26-598e-4bd0-af50-a8d72057efa2', 1, NULL, '主机一');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_permission
