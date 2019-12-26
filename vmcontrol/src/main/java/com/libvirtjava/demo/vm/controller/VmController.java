@@ -265,7 +265,7 @@ public class VmController {
     @PostMapping(params = "deleteCluster")
     @ResponseBody
     public Map<String, Object> deleteCluster(Node clusterNode) {
-        LOGGER.info("删除集群结点",clusterNode.getNoderName());
+        LOGGER.info("删除集群结点",clusterNode.getNodeName());
 
         return menuService.deleteCluster(clusterNode,connect);
     }
@@ -278,7 +278,7 @@ public class VmController {
     @PostMapping(params = "addCluster")
     @ResponseBody
     public Map<String, Object> addCluster(Node clusterNode) {
-        LOGGER.info("添加集群结点",clusterNode.getNoderName());
+        LOGGER.info("添加集群结点",clusterNode.getNodeName());
 
         return menuService.addCluster(clusterNode);
     }
@@ -292,7 +292,6 @@ public class VmController {
     @ResponseBody
     public Map<String, Object> addHost(HostRecord hostRecord,String clusterName) {
         LOGGER.info("添加主机记录",hostRecord.getHostName());
-
         return hostService.addHostRecord(hostRecord,clusterName);
     }
 

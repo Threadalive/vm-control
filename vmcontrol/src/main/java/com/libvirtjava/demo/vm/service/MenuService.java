@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description TODO
@@ -59,6 +56,7 @@ public class MenuService {
         clusterNode.setStatus(Node.STATUS_ENABLED);
         //集群结点parentId为"0"
         clusterNode.setParentId("0");
+        clusterNode.setId(UUID.randomUUID().toString());
         try {
             nodeMapper.save(clusterNode);
             resultMap.put(Const.MSG,Const.SUCCEED);

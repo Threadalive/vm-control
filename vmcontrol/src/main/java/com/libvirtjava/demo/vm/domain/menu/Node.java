@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @Description TODO
@@ -91,11 +90,11 @@ public class Node implements Serializable {
         this.clusterId = clusterId;
     }
 
-    public String getNoderName() {
+    public String getNodeName() {
         return nodeName;
     }
 
-    public void setNoderName(String noderName) {
+    public void setNodeName(String noderName) {
         this.nodeName = noderName;
     }
 

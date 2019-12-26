@@ -122,7 +122,7 @@ public class VmService {
             node.setId(UUID.randomUUID().toString());
             node.setVmId(domain.getUUIDString());
             node.setStatus(Node.STATUS_ENABLED);
-            node.setNoderName(domain.getName());
+            node.setNodeName(domain.getName());
             node.setClusterId(vmParms.getClusterToBelong());
             //若未激活
             if (domain.isActive() == 0){

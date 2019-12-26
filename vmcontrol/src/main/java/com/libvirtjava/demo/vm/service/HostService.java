@@ -98,6 +98,7 @@ public class HostService {
         Node hostNode = new Node();
         Node clusterNode = nodeMapper.findByNodeNameAndStatus(clusterName, Node.STATUS_ENABLED);
         try {
+            hostRecord.setHid(UUID.randomUUID().toString());
             hostRecordMapper.save(hostRecord);
             //设置结点id
             hostNode.setId(UUID.randomUUID().toString());
@@ -108,6 +109,9 @@ public class HostService {
             hostNode.setStatus(Node.STATUS_ENABLED);
             //设置主机id
             hostNode.setHostId(UUID.randomUUID().toString());
+            //设置名字描述
+            hostNode.setNodeName(hostRecord.getHostName());
+            hostNode.setNodeDesc(hostRecord.getHostDesc());
 
             //保存主机结点
             nodeMapper.save(hostNode);
