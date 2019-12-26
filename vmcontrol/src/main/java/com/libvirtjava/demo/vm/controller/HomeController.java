@@ -51,7 +51,7 @@ public class HomeController {
         Map<String,Object> resultMap = new HashMap<>(1);
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
-
+        subject.logout();
         String sessionId = (String)session.getId();
         if (!"".equals( session.getAttribute("currentUser"))){
             session.setAttribute("currentUser","");
