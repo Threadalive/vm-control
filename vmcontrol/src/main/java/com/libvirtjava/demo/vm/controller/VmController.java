@@ -69,14 +69,14 @@ public class VmController {
      * @return 返回主机信息页面
      */
 //    @RequiresRoles("admin")
-    @GetMapping(params = "host")
-    public String host(ModelMap modelMap) {
-        Host host = hostService.getHost(connect);
-
-        modelMap.put("hostMsg", host);
-
-        return "kvm/host";
-    }
+//    @GetMapping(params = "host")
+//    public String host(ModelMap modelMap) {
+//        Host host = hostService.getHost(connect);
+//
+//        modelMap.put("hostMsg", host);
+//
+//        return "kvm/host";
+//    }
 
     /**
      * iso卷信息列表
@@ -136,6 +136,26 @@ public class VmController {
         HashMap<String, String> resultMap = new HashMap<>(1);
 
         int result = vmService.stopVm(uuid, connect);
+        if (result == 0) {
+            resultMap.put(Const.MSG, Const.SUCCEED);
+        }else {
+            resultMap.put(Const.MSG, Const.FAIL);
+        }
+        return resultMap;
+    }
+
+    /**
+     * 重启虚拟机
+     *
+     * @param uuid  虚拟机id
+     * @return 0 -1
+     */
+    @PostMapping(params = "restartVm")
+    @ResponseBody
+    public HashMap<String, String> restartVm(String uuid) {
+        HashMap<String, String> resultMap = new HashMap<>(1);
+
+        int result = vmService.restartVm(uuid, connect);
         if (result == 0) {
             resultMap.put(Const.MSG, Const.SUCCEED);
         }else {
@@ -232,7 +252,7 @@ public class VmController {
         Map<String, Object> resultMap = new HashMap<>(1);
         List<Node> nodeList;
         if (node.getParentId() == null) {
-            nodeList = nodeMapper.getClusterList(null);
+            nodeList = nodeMapper.getClusterList();
         } else if ("0".equals(node.getParentId())) {
             nodeList = menuService.getHostAndVmList(node);
         } else {
@@ -284,6 +304,57 @@ public class VmController {
         return menuService.addCluster(clusterNode);
     }
 
+    /**
+     * 展示全部集群结点
+     * @return 集群结点列表
+     */
+    @PostMapping(params = "listClusterNode")
+    @ResponseBody
+    public Map<String, Object> listClusterNode() {
+        LOGGER.info("获取全部集群结点");
+        Map<String, Object> resultMap = new HashMap<>(1);
+
+        List<Node> nodeList = menuService.listClusterNode();
+
+        resultMap.put("clusterNodeList",nodeList);
+
+        return resultMap;
+    }
+
+
+    /**
+     * 展示全部主机结点
+     * @return 集群结点列表
+     */
+    @PostMapping(params = "listHostNode")
+    @ResponseBody
+    public Map<String, Object> listHostNode() {
+        LOGGER.info("获取全部主机结点");
+        Map<String, Object> resultMap = new HashMap<>(1);
+
+        List<Node> nodeList = menuService.listHostNode();
+
+        resultMap.put("clusterNodeList",nodeList);
+
+        return resultMap;
+    }
+
+    /**
+     * 展示全部主机结点
+     * @return 集群结点列表
+     */
+    @PostMapping(params = "listVmNode")
+    @ResponseBody
+    public Map<String, Object> listVmNode() {
+        LOGGER.info("获取全部虚拟机结点");
+        Map<String, Object> resultMap = new HashMap<>(1);
+
+        List<Node> nodeList = menuService.getAllVmList();
+
+        resultMap.put("vmNodeList",nodeList);
+
+        return resultMap;
+    }
     /**
      * 添加主机记录
      * @param hostRecord 要添加的集群结点

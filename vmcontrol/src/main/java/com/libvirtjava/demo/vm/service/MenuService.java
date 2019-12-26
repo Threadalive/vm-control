@@ -45,6 +45,19 @@ public class MenuService {
         return nodeList;
     }
 
+    public List<Node> getAllVmList(){
+        List<Node> nodeList = new ArrayList<>();
+        nodeList = nodeMapper.getByVmIdNotNull();
+        return nodeList;
+    }
+
+    public List<Node> listClusterNode(){
+        return nodeMapper.getClusterList();
+    }
+
+    public List<Node> listHostNode(){
+        return nodeMapper.getHostList("0");
+    }
     /**
      * 添加集群结点
      * @param clusterNode 集群结点

@@ -95,6 +95,32 @@ public class VmService {
     }
 
     /**
+     * 重启虚拟机
+     *
+     * @param vmUuid  虚拟机id
+     * @param connect 连接对象
+     * @return 0:重启成功 1:重启失败
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public int restartVm(String vmUuid, Connect connect) {
+        Domain dom;
+        try {
+            dom = connect.domainLookupByUUIDString(vmUuid);
+            dom.reboot(1);
+            if (dom.isActive() != 1) {
+//                Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
+//                HostRecord rHostRecord = hostRecordMapper.findFirstByOrderByHid();
+//                //更新父目录id
+//                nodeMapper.update(rHostRecord.getHid(), node.getId());
+                dom.create();
+            }
+        } catch (LibvirtException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return 0;
+    }
+    /**
      * 创建新的虚拟机
      *
      * @param vmParms 虚拟机参数
@@ -212,10 +238,16 @@ public class VmService {
     public Map<String, Object> convertDomainInfo(Domain domain) throws LibvirtException {
         Map<String, Object> domainMap = new HashMap<String, Object>();
         domainMap.put("uuid", domain.getUUIDString());
-        domainMap.put("name", domain.getName());
-        domainMap.put("cpus", domain.getInfo().nrVirtCpu);
+        domainMap.put("vmName", domain.getName());
         domainMap.put("memory", domain.getMaxMemory());
         domainMap.put("state", MydomainState.values()[domain.getInfo().state.ordinal()]);
+        domainMap.put("maxCpus",domain.getMaxVcpus());
+        domainMap.put("osType",domain.getOSType());
+        domainMap.put("cpuInfo",domain.getVcpusInfo());
+        domainMap.put("isAlive",domain.isActive());
+
+
+
         return domainMap;
     }
 
