@@ -26,6 +26,9 @@ public class SingletonConnection {
             synchronized (Connect.class) {
                 if (connect == null) {
                     try {
+                        if("".equals(hostAddr)||null == hostAddr){
+                            connect = new Connect("qemu:///system", false);
+                        }
                         connect = new Connect("qemu+tcp://root@"+hostAddr+"/system", false);
                     } catch (LibvirtException e) {
                         System.out.println("exception caught:" + e);
