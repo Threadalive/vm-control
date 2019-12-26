@@ -7,14 +7,18 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Description TODO
  * @Author zhenxing.dong
  * @Date 2019/12/20 17:21
  */
-@RestController
+@Controller
 @RequestMapping(value = "/user")
 public class HomeController {
 
@@ -28,6 +32,7 @@ public class HomeController {
 //        return "/index";
 //    }
     @PostMapping("/login")
+    @ResponseBody
     public JSONObject login(@RequestParam String username, @RequestParam String password) {
 
         LOGGER.info("进入登录");
@@ -41,7 +46,9 @@ public class HomeController {
     }
 
     @PostMapping("/logout")
-    public void logout(){
+    @ResponseBody
+    public Map<String,Object> logout(){
+        Map<String,Object> resultMap = new HashMap<>(1);
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
 
@@ -52,6 +59,8 @@ public class HomeController {
         LOGGER.info("sessionId{}",sessionId);
         LOGGER.info("已退出",sessionId);
 
+        resultMap.put(Const.MSG,Const.SUCCEED);
+        return resultMap;
     }
 
    /* @RequestMapping(value = "/login")
