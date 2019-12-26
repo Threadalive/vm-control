@@ -7,21 +7,14 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description TODO
  * @Author zhenxing.dong
  * @Date 2019/12/20 17:21
  */
-@Controller
+@RestController
 @RequestMapping(value = "/user")
 public class HomeController {
 
@@ -35,7 +28,7 @@ public class HomeController {
 //        return "/index";
 //    }
     @PostMapping("/login")
-    public JSONObject login(@RequestParam String userName, @RequestParam String password) {
+    public JSONObject login(@RequestParam String username, @RequestParam String password) {
 
         LOGGER.info("进入登录");
         Subject subject = SecurityUtils.getSubject();
@@ -99,23 +92,23 @@ public class HomeController {
         return resultMap;
     }*/
 
-    @RequestMapping("/403")
-    public String unauthorizedRole(){
-        System.out.println("------没有权限-------");
-        return "/403";
-    }
+//    @RequestMapping("/403")
+//    public String unauthorizedRole(){
+//        System.out.println("------没有权限-------");
+//        return "/403";
+//    }
 
-    /**
-     * 未登录，shiro应重定向到登录界面，此处返回未登录状态信息由前端控制跳转页面
-     * @return 未登录
-     */
-    @RequestMapping(value = "/unauth")
-    @ResponseBody
-    public Map<String,Object> unauth() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(Const.MSG, "unLogin");
-        return map;
-    }
+//    /**
+//     * 未登录，shiro应重定向到登录界面，此处返回未登录状态信息由前端控制跳转页面
+//     * @return 未登录
+//     */
+//    @RequestMapping(value = "/unauth")
+//    @ResponseBody
+//    public Map<String,Object> unauth() {
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put(Const.MSG, "unLogin");
+//        return map;
+//    }
 
 
 }

@@ -47,10 +47,10 @@ public class MyShiroRealm extends AuthorizingRealm {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-    @Override
-    public String getName() {
-        return "myRealm";
-    }
+//    @Override
+//    public String getName() {
+//        return "myRealm";
+//    }
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -104,9 +104,9 @@ public class MyShiroRealm extends AuthorizingRealm {
         }
 
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
-                userInfo.getUsername(),
+                userInfo,
                 userInfo.getPassword(),
-                ByteSource.Util.bytes(userInfo.getSalt()),
+//                ByteSource.Util.bytes(userInfo.getSalt()),
                 getName()
         );
 

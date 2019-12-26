@@ -94,7 +94,7 @@ public class VmController {
     /**
      * 获取存储池名数组
      *
-     * @return 结果集<"isoVolList",Map<卷名，卷路径>>
+     * @return 结果集<"spsNameList",String[name]>
      */
     @PostMapping(params = "getStoragePoolsMsg")
     @ResponseBody
@@ -230,8 +230,8 @@ public class VmController {
      */
     @PostMapping(params = "getTree")
     @ResponseBody
-    public HashMap<String, Object> getTree(Node node) {
-        HashMap<String, Object> resultMap = new HashMap<>(1);
+    public Map<String, Object> getTree(Node node) {
+        Map<String, Object> resultMap = new HashMap<>(1);
         List<Node> nodeList;
         if (node.getParentId() == null) {
             nodeList = nodeMapper.getClusterList(null);
@@ -291,7 +291,7 @@ public class VmController {
      * @param hostRecord 要添加的集群结点
      * @return 添加结果
      */
-    @PostMapping(params = "addHostRecord")
+    @PostMapping(params = "addHost")
     @ResponseBody
     public Map<String, Object> addHost(HostRecord hostRecord,String clusterName) {
         LOGGER.info("添加主机记录",hostRecord.getHostName());
@@ -304,7 +304,7 @@ public class VmController {
      * @param hostRecord 要删除的集群结点
      * @return 删除结果
      */
-    @PostMapping(params = "deleteHostRecord")
+    @PostMapping(params = "deleteHost")
     @ResponseBody
     public Map<String, Object> deleteHostRecord(HostRecord hostRecord) {
         LOGGER.info("删除主机记录",hostRecord.getHostName());

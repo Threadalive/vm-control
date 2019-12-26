@@ -60,7 +60,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/**", "authc");
 
         // 设置登录的接口
-        shiroFilterFactoryBean.setLoginUrl("user/login");
+        shiroFilterFactoryBean.setLoginUrl("/user/login");
 
         //未授权界面;
 //        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
@@ -103,7 +103,7 @@ public class ShiroConfig {
     public MyShiroRealm myShiroRealm(){
         MyShiroRealm myShiroRealm = new MyShiroRealm();
         // 将md5密码比对器传给realm
-        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+//        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
 
         return myShiroRealm;
     }

@@ -21,6 +21,7 @@ public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+        System.out.println("进入拒绝访问接口");
         //是否为登陆URL
         if (this.isLoginRequest(request, response)) {
             LOGGER.info("--------------isLoginRequest--------------");
@@ -46,7 +47,7 @@ public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
             response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             JSONObject json = new JSONObject();
-            json.put("no-session", "未登录，无法访问该地址");
+            json.put("no-session", "unLogin");
             out.println(json);
             out.flush();
             out.close();
