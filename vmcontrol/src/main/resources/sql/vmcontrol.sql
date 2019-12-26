@@ -11,7 +11,7 @@
  Target Server Version : 80015
  File Encoding         : 65001
 
- Date: 26/12/2019 14:38:27
+ Date: 26/12/2019 22:08:19
 */
 
 SET NAMES utf8mb4;
@@ -181,6 +181,7 @@ CREATE TABLE `user_info` (
   `salt` varchar(255) DEFAULT NULL,
   `state` tinyint(4) NOT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `UK_f2ksd6h8hsjtd57ipfq9myr64` (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -189,7 +190,7 @@ CREATE TABLE `user_info` (
 -- Records of user_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `user_info` VALUES (1, '管理员', '123456', '8d78869f470951332959580424d4bf4f', 0, 'admin');
+INSERT INTO `user_info` VALUES (1, '管理员', '123456', '8d78869f470951332959580424d4bf4f', 0, 'admin', NULL);
 COMMIT;
 
 -- ----------------------------

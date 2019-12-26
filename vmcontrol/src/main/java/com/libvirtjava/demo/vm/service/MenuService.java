@@ -52,7 +52,7 @@ public class MenuService {
     }
 
     public List<Node> listClusterNode(){
-        return nodeMapper.getClusterList();
+        return nodeMapper.getNodesByParentId("0");
     }
 
     public List<Node> listHostNode(){

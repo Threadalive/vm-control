@@ -24,10 +24,10 @@ public interface NodeMapper extends JpaRepository<Node,String> {
 
     Node findByHostIdAndStatus(String hostId,int status);
 
-    @Query("select n from Node n where n.parentId is null ")
-    List<Node> getClusterList();
+//    @Query("select n from Node n where n.parentId is ?1 ")
+    List<Node> getNodesByParentId(String parentId);
 
-    @Query("select n from Node n where n.parentId not like ?1 and n.vmId is null")
+    @Query("select n from Node n where n.parentId <> ?1 and n.vmId is null")
     List<Node> getHostList(String parentId);
 
     List<Node> getByVmIdNotNull();

@@ -105,7 +105,7 @@ public class HostService {
             //内存占用
             hostRecord.setMemUsed(nodeInfo.memory);
 
-
+            hostRecord.setHostName(hostName);
 
         } catch (LibvirtException e) {
             LOGGER.error("{}",e);

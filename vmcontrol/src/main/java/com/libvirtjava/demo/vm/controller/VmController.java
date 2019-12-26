@@ -48,9 +48,6 @@ public class VmController {
     private Logger LOGGER = LoggerFactory.getLogger(VmController.class);
 
     @Autowired
-    private NodeMapper nodeMapper;
-
-    @Autowired
     private MenuService menuService;
     /**
      * 主机信息操作服务
@@ -253,7 +250,7 @@ public class VmController {
         Map<String, Object> resultMap = new HashMap<>(1);
         List<Node> nodeList;
         if (node.getParentId() == null) {
-            nodeList = nodeMapper.getClusterList();
+            nodeList = menuService.listClusterNode();
         } else if ("0".equals(node.getParentId())) {
             nodeList = menuService.getHostAndVmList(node);
         } else {
@@ -394,9 +391,9 @@ public class VmController {
      * 获取当前连接主机信息
      * @return 当前连接主机信息
      */
-    @PostMapping(params = "getHostMsg")
+    @PostMapping(params = "getCurrentHostMsg")
     @ResponseBody
-    public Map<String, Object> getHostMsg() {
+    public Map<String, Object> getCurrentHostMsg() {
         Map<String, Object> resultMap = new HashMap<>(1);
 
         Host host = hostService.getHost(connect);
@@ -417,6 +414,7 @@ public class VmController {
         resultMap.put(Const.MSG,host);
         return resultMap;
     }
+
     /**
      * 获取记录的主机列表信息
      * @return 记录的主机列表
