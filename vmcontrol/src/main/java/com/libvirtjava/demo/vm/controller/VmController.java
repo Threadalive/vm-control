@@ -5,6 +5,7 @@ import com.libvirtjava.demo.vm.domain.menu.Node;
 import com.libvirtjava.demo.vm.mapper.NodeMapper;
 import com.libvirtjava.demo.vm.service.MenuService;
 import com.libvirtjava.demo.vm.util.Const;
+import com.libvirtjava.demo.vm.util.LogUtil;
 import com.libvirtjava.demo.vm.util.SingletonConnection;
 import com.libvirtjava.demo.vm.domain.vm.Host;
 import com.libvirtjava.demo.vm.domain.vm.VmParms;
@@ -330,9 +331,17 @@ public class VmController {
     @ResponseBody
     public Map<String, Object> getHostMsgList() {
         Map<String, Object> resultMap = new HashMap<>(1);
-
         List<HostRecord> hosts = hostService.getAllHostRecords();
         resultMap.put(Const.MSG,hosts);
+        return resultMap;
+    }
+
+    @GetMapping(params = "getLogMsg")
+    @ResponseBody
+    public Map<String,String> getLogMsg(){
+        Map<String, String> resultMap = new HashMap<>(1);
+        String logMsg= LogUtil.readFileByLines("F:\\Desktop\\新建文本文档.txt");
+        resultMap.put(Const.MSG,logMsg);
         return resultMap;
     }
 }
