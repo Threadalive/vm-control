@@ -108,12 +108,11 @@ public class VmController {
      * 启动虚拟机
      *
      * @param uuid    虚拟机id
-     * @param connect 连接对象
      * @return 0 -1
      */
     @PostMapping(params = "startVm")
     @ResponseBody
-    public HashMap<String, String> startVm(String uuid, Connect connect) {
+    public HashMap<String, String> startVm(String uuid) {
         HashMap<String, String> resultMap = new HashMap<>(1);
 
         int result = vmService.startVm(uuid, connect);
@@ -129,12 +128,11 @@ public class VmController {
      * 关闭虚拟机
      *
      * @param uuid    虚拟机id
-     * @param connect 连接对象
      * @return 0 -1
      */
     @PostMapping(params = "stopVm")
     @ResponseBody
-    public HashMap<String, String> stopVm(String uuid, Connect connect) {
+    public HashMap<String, String> stopVm(String uuid) {
         HashMap<String, String> resultMap = new HashMap<>(1);
 
         int result = vmService.stopVm(uuid, connect);
@@ -206,11 +204,10 @@ public class VmController {
     /**
      * 关闭连接
      *
-     * @param connect 连接对象
      */
     @PostMapping(params = "closeConn")
     @ResponseBody
-    public HashMap<String, String> closeConn(Connect connect) {
+    public HashMap<String, String> closeConn() {
         HashMap<String, String> resultMap = new HashMap<>(1);
         try {
             connect.close();
