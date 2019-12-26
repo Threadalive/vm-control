@@ -23,4 +23,15 @@ public class UserInfoService {
     public UserInfo getUserInfo(String userName){
         return userInfoMapper.getUserInfoByUsername(userName);
     }
+
+    /**
+     * 获取用户信息
+     * @param userId 用户id
+     * @return 用户信息
+     */
+    public UserInfo getUserInfoById(Integer userId){
+        return userInfoMapper.getUserInfoByUid(userId);
+    }
+
+
 }

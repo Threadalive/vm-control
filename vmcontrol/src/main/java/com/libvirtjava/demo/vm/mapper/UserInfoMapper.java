@@ -16,4 +16,6 @@ public interface UserInfoMapper extends JpaRepository<UserInfo,Integer> {
      * @return 用户实体
      */
     UserInfo getUserInfoByUsername(String userName);
+
+    UserInfo getUserInfoByUid(Integer userId);
 }

@@ -66,12 +66,12 @@ public class HostService {
     }
 
     /**
-     * 随机获取一个主机
-     *
+     * 根据主机id获取一个主机信息对象
+     * @param hostId 主机id
      * @return
      */
-    public HostRecord getRandomHost() {
-        return hostRecordMapper.findFirstByOrderByHid();
+    public HostRecord getHostMsgByHostId(String hostId){
+        return hostRecordMapper.getHostRecordByHid(hostId);
     }
 
     /**
@@ -93,7 +93,23 @@ public class HostService {
      * @return 添加结果
      */
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> addHostRecord(HostRecord hostRecord, String clusterName) {
+    public Map<String, Object> addHostRecord(HostRecord hostRecord, String clusterName,Connect connect) {
+
+        try {
+            String hostName = connect.getHostName();
+            //主机结点信息
+            NodeInfo nodeInfo = connect.nodeInfo();
+
+            hostRecord.setCpuNum(nodeInfo.maxCpus());
+
+            //内存占用
+            hostRecord.setMemUsed(nodeInfo.memory);
+
+
+
+        } catch (LibvirtException e) {
+            LOGGER.error("{}",e);
+        }
         Map<String, Object> resultMap = new HashMap<>(1);
         Node hostNode = new Node();
         Node clusterNode = nodeMapper.findByNodeNameAndStatus(clusterName, Node.STATUS_ENABLED);

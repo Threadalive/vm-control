@@ -365,7 +365,16 @@ public class VmController {
     @ResponseBody
     public Map<String, Object> addHost(HostRecord hostRecord,String clusterName) {
         LOGGER.info("添加主机记录",hostRecord.getHostName());
-        return hostService.addHostRecord(hostRecord,clusterName);
+        if (null != connect){
+            //关闭现有连接
+            closeConn();
+        }
+        //设置要添加主机的连接
+        SingletonConnection.setHostAddr(hostRecord.getIpAddr());
+        //获取连接
+        SingletonConnection.getInstance(connect);
+
+        return hostService.addHostRecord(hostRecord,clusterName,connect);
     }
 
     /**
@@ -391,6 +400,20 @@ public class VmController {
         Map<String, Object> resultMap = new HashMap<>(1);
 
         Host host = hostService.getHost(connect);
+        resultMap.put(Const.MSG,host);
+        return resultMap;
+    }
+
+    /**
+     * 获取当前连接主机信息
+     * @return 当前连接主机信息
+     */
+    @PostMapping(params = "getHostMsgByHostId")
+    @ResponseBody
+    public Map<String, Object> getHostMsgByHostId(String hostId) {
+        Map<String, Object> resultMap = new HashMap<>(1);
+
+        HostRecord host = hostService.getHostMsgByHostId(hostId);
         resultMap.put(Const.MSG,host);
         return resultMap;
     }

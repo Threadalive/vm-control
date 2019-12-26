@@ -55,6 +55,8 @@ public class CustomerAuthenticatingFilter extends AuthenticatingFilter {
     @Override
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
         LOGGER.info("AuthenticatingFilterOverride--------onLoginSuccess------");
+        PrintWriter out = null;
+        JSONObject json = new JSONObject();
         UserInfo userInfo = (UserInfo) subject.getPrincipal();
         //获取session
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
@@ -62,9 +64,13 @@ public class CustomerAuthenticatingFilter extends AuthenticatingFilter {
         //设置当前session的用户属性
         session.setAttribute("currentUser", userInfo);
 
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+
+        json.put("userId",userInfo.getUid());
+        out.println(json);
+        out.flush();
+        out.close();
         return true;
     }
 

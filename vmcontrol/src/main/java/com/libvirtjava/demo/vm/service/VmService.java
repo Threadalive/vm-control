@@ -237,16 +237,23 @@ public class VmService {
      */
     public Map<String, Object> convertDomainInfo(Domain domain) throws LibvirtException {
         Map<String, Object> domainMap = new HashMap<String, Object>();
+        DomainInfo domainInfo = domain.getInfo();
         domainMap.put("uuid", domain.getUUIDString());
         domainMap.put("vmName", domain.getName());
         domainMap.put("memory", domain.getMaxMemory());
-        domainMap.put("state", MydomainState.values()[domain.getInfo().state.ordinal()]);
+        domainMap.put("state", MydomainState.values()[domainInfo.state.ordinal()]);
         domainMap.put("maxCpus",domain.getMaxVcpus());
         domainMap.put("osType",domain.getOSType());
         domainMap.put("cpuInfo",domain.getVcpusInfo());
         domainMap.put("isAlive",domain.isActive());
 
-
+        //若虚拟机运行中
+        if (1 == (int)domainMap.get("isAlive")){
+            DomainJobInfo domainJobInfo = domain.getJobInfo();
+            //虚拟机内存使用率
+            double memUsedRate = (domainJobInfo.getMemTotal()-domainJobInfo.getMemRemaining())/domainJobInfo.getMemTotal();
+            domainMap.put("memUsedRate",memUsedRate);
+        }
 
         return domainMap;
     }

@@ -40,6 +40,9 @@ public class UserInfo implements Serializable {
      */
     private String salt;
 
+
+    private String avatar;
+
     /**
      * 用户状态,0:创建未认证（比如没有激活，没有输入验证码等等）--等待验证的用户 , 1:正常状态,2：用户被锁定.
      */
@@ -51,6 +54,14 @@ public class UserInfo implements Serializable {
      * 一个用户具有多个角色
      */
     private List<SysRole> roleList;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public Integer getUid() {
         return uid;

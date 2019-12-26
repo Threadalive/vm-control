@@ -13,4 +13,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface HostRecordMapper extends CrudRepository<HostRecord,String> {
     HostRecord findFirstByOrderByHid();
 
+    HostRecord getHostRecordByHid(String hid);
+
 }

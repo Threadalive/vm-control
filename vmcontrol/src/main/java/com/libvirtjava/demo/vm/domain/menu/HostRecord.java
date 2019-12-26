@@ -18,9 +18,9 @@ public class HostRecord implements Serializable {
     private String hostDesc;
     private String ipAddr;
     private Integer cpuNum;
-    private Integer memSize;
+    private Long memSize;
     private String pwd;
-    private Integer memUsed;
+    private Long memUsed;
 
     public String getHid() {
         return hid;
@@ -62,11 +62,11 @@ public class HostRecord implements Serializable {
         this.cpuNum = cpuNum;
     }
 
-    public Integer getMemSize() {
+    public Long getMemSize() {
         return memSize;
     }
 
-    public void setMemSize(Integer memSize) {
+    public void setMemSize(Long memSize) {
         this.memSize = memSize;
     }
 
@@ -78,11 +78,11 @@ public class HostRecord implements Serializable {
         this.pwd = pwd;
     }
 
-    public Integer getMemUsed() {
+    public Long getMemUsed() {
         return memUsed;
     }
 
-    public void setMemUsed(Integer memUsed) {
+    public void setMemUsed(Long memUsed) {
         this.memUsed = memUsed;
     }
 }

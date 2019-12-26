@@ -1,6 +1,8 @@
 package com.libvirtjava.demo.vm.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.libvirtjava.demo.vm.domain.user.UserInfo;
+import com.libvirtjava.demo.vm.service.UserInfoService;
 import com.libvirtjava.demo.vm.util.Const;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -27,6 +29,8 @@ public class HomeController {
      */
     private Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
+    private UserInfoService userInfoService;
+
 //    @RequestMapping({"/","/index"})
 //    public String index() {
 //        return "/index";
@@ -45,12 +49,28 @@ public class HomeController {
         return json;
     }
 
+    /**
+     * 获取用户信息
+     * @return 用户信息
+     */
+    @PostMapping(params = "getUserMsgById")
+    @ResponseBody
+    public Map<String, Object> getUserMsgById(Integer userId) {
+        Map<String, Object> resultMap = new HashMap<>(1);
+
+        UserInfo userInfo = userInfoService.getUserInfoById(userId);
+
+        resultMap.put(Const.MSG,userInfo);
+        return resultMap;
+    }
+
     @PostMapping("/logout")
     @ResponseBody
     public Map<String,Object> logout(){
         Map<String,Object> resultMap = new HashMap<>(1);
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
+
         subject.logout();
         String sessionId = (String)session.getId();
         if (!"".equals( session.getAttribute("currentUser"))){
