@@ -266,6 +266,8 @@ public class VmController {
                     //根据uuid查询对应domain
                     domain = connect.domainLookupByUUIDString(node.getVmId());
                     Map<String,Object> domainMap = vmService.convertDomainInfo(domain);
+                    VmRecord vmRecord = vmService.getVmRecord(node.getVmId());
+                    domainMap.put("vmMsginDB",vmRecord);
                     resultMap.put("vmMsg",domainMap);
                 } catch (LibvirtException e) {
                     LOGGER.error("{}",e);
