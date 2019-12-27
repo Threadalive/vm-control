@@ -116,7 +116,6 @@ public class VmController {
     @ResponseBody
     public HashMap<String, String> startVm(String uuid) {
         HashMap<String, String> resultMap = new HashMap<>(1);
-
         int result = vmService.startVm(uuid, connect);
         if (result == 0) {
             resultMap.put(Const.MSG, Const.SUCCEED);
@@ -452,7 +451,7 @@ public class VmController {
         return resultMap;
     }
 
-    @GetMapping(params = "getLogMsg")
+    @PostMapping(params = "getLogMsg")
     @ResponseBody
     public Map<String,String> getLogMsg(){
         Map<String, String> resultMap = new HashMap<>(1);

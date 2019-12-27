@@ -39,7 +39,7 @@ public class HomeController {
 //    }
     @PostMapping("/login")
     @ResponseBody
-    public JSONObject login(@RequestParam String username, @RequestParam String password) {
+    public JSONObject login(String username, String password) {
 
         LOGGER.info("进入登录");
         Subject subject = SecurityUtils.getSubject();
@@ -75,6 +75,7 @@ public class HomeController {
 
 //        subject.logout();
         String sessionId = (String)session.getId();
+
         if (!"".equals( session.getAttribute("currentUser"))){
             session.setAttribute("currentUser","");
         }

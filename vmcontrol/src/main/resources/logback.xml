@@ -6,7 +6,7 @@
     <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} %-5level %logger{36} [%line] - %msg%n" />
 
     <!-- 定义日志存储的路径，不要配置相对路径 -->
-    <property name="FILE_PATH" value="/Users/mac/Documents/vmControlLog/log.%d{yyyy-MM-dd}.%i.log" />
+    <property name="FILE_PATH" value="/home/mxinx/Documents/vmControlLog/log.%d{yyyy-MM-dd}.%i.log" />
 
     <!-- 控制台输出日志 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

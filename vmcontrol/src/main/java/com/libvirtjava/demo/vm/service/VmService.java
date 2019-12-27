@@ -79,6 +79,7 @@ public class VmService {
      * @param connect 连接对象
      * @return 0:关闭成功 1:关闭失败
      */
+    @Transactional(rollbackFor = Exception.class)
     public int stopVm(String vmUuid, Connect connect) {
         Domain dom;
         try {
@@ -88,8 +89,10 @@ public class VmService {
                 //更新父目录id
                 Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
                 nodeMapper.updateNode(node.getClusterId(), node.getId());
+                vmRecordMapper.updateNode("nostate",vmUuid);
+
             }
-        } catch (LibvirtException e) {
+        } catch (Exception e) {
             LOGGER.error("{}",e);
             return -1;
         }
@@ -143,7 +146,7 @@ public class VmService {
             vmRecord.setMemSize(domain.getMaxMemory());
             vmRecord.setIos(vmParms.getIsopath());
             vmRecord.setVmName(vmParms.getName());
-            vmRecord.setStates(1);
+            vmRecord.setStates("nostate");
             vmRecord.setVmDesc(vmParms.getVmDesc());
 
 
@@ -173,7 +176,8 @@ public class VmService {
 
 
     public VmRecord getVmRecord(String vmId){
-        return vmRecordMapper.getOne(vmId);
+        VmRecord vmRecord =  vmRecordMapper.getByVmId(vmId);
+        return vmRecord;
     }
     /**
      * 创建磁盘

@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 public class UserInfo implements Serializable {
 
-    private static final long serialVersionUID=7981560250804078637L;
+    private static final long serialVersionUID=1L;
 
     @Id
     @GeneratedValue

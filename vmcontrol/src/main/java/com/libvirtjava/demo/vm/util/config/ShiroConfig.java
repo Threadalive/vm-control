@@ -52,6 +52,7 @@ public class ShiroConfig {
         // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/static/**", "anon");
 
+        filterChainDefinitionMap.put("/vm/allControl?getLogMsg", "anon");
 
         //配置退出过滤器,其中的具体的退出代码Shiro已经实现了
 //        filterChainDefinitionMap.put("/logout", "logout");
@@ -61,6 +62,7 @@ public class ShiroConfig {
 
         // 设置登录的接口
         shiroFilterFactoryBean.setLoginUrl("/user/login");
+
 
         //未授权界面;
 //        shiroFilterFactoryBean.setUnauthorizedUrl("/403");

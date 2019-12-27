@@ -23,7 +23,7 @@ public class VmRecord implements Serializable {
     private String ios;
     private String os;
     private Integer memUsed;
-    private Integer states;
+    private String states;
     private Integer cpuUsed;
 
     public String getVmId() {
@@ -106,11 +106,11 @@ public class VmRecord implements Serializable {
         this.memUsed = memUsed;
     }
 
-    public Integer getStates() {
+    public String getStates() {
         return states;
     }
 
-    public void setStates(Integer states) {
+    public void setStates(String states) {
         this.states = states;
     }
 

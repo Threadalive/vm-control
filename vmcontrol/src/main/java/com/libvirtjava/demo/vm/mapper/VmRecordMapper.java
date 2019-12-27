@@ -15,4 +15,6 @@ public interface VmRecordMapper extends JpaRepository<VmRecord,String> {
     @Modifying
     @Query("UPDATE VmRecord v set v.states = :states where v.vmId = :vmId")
     void updateNode(String states, String vmId);
+
+    VmRecord getByVmId(String vmId);
 }
