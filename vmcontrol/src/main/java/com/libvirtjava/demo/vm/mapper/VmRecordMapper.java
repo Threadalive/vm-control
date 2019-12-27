@@ -6,12 +6,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 /**
- *
- * @param
- * @return
- * @author zhenxing.dong
+ * @Description TODO
+ * @Author zhenxing.dong
+ * @Date 2019/12/20 16:27
  */
-public interface VmRecordMapper extends JpaRepository<VmRecord,String> {
+public interface VmRecordMapper extends JpaRepository<VmRecord, String> {
     @Modifying
     @Query("UPDATE VmRecord v set v.states = :states where v.vmId = :vmId")
     void updateNode(String states, String vmId);

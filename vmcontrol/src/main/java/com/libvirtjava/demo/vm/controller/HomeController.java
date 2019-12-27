@@ -33,10 +33,13 @@ public class HomeController {
     @Autowired
     private UserInfoService userInfoService;
 
-//    @RequestMapping({"/","/index"})
-//    public String index() {
-//        return "/index";
-//    }
+    /**
+     * 用户登录接口
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 登录结果的json
+     */
     @PostMapping("/login")
     @ResponseBody
     public JSONObject login(String username, String password) {
@@ -47,12 +50,13 @@ public class HomeController {
         Session session = subject.getSession();
         String sessionId = (String) session.getId();
         json.put("sessionId", sessionId);
-        json.put(Const.MSG,Const.SUCCEED);
+        json.put(Const.MSG, Const.SUCCEED);
         return json;
     }
 
     /**
      * 获取用户信息
+     *
      * @return 用户信息
      */
     @PostMapping(params = "getUserMsgById")
@@ -62,27 +66,27 @@ public class HomeController {
 
         UserInfo userInfo = userInfoService.getUserInfoById(userId);
 
-        resultMap.put(Const.MSG,userInfo);
+        resultMap.put(Const.MSG, userInfo);
         return resultMap;
     }
 
     @PostMapping("/logout")
     @ResponseBody
-    public Map<String,Object> logout(){
-        Map<String,Object> resultMap = new HashMap<>(1);
+    public Map<String, Object> logout() {
+        Map<String, Object> resultMap = new HashMap<>(1);
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
 
-//        subject.logout();
-        String sessionId = (String)session.getId();
+        //subject.logout();
+        String sessionId = (String) session.getId();
 
-        if (!"".equals( session.getAttribute("currentUser"))){
-            session.setAttribute("currentUser","");
+        if (!"".equals(session.getAttribute("currentUser"))) {
+            session.setAttribute("currentUser", "");
         }
-        LOGGER.info("sessionId{}",sessionId);
-        LOGGER.info("已退出",sessionId);
+        LOGGER.info("sessionId{}", sessionId);
+        LOGGER.info("已退出", sessionId);
 
-        resultMap.put(Const.MSG,Const.SUCCEED);
+        resultMap.put(Const.MSG, Const.SUCCEED);
         return resultMap;
     }
 

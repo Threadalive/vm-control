@@ -5,7 +5,8 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * @Description TODO
+ * @Description 主机信息记录
+ *
  * @Author zhenxing.dong
  * @Date 2019/12/24 10:01
  */
@@ -13,13 +14,37 @@ import java.io.Serializable;
 public class HostRecord implements Serializable {
 
     @Id
+    /**
+     * 主机id
+     */
     private String hid;
+    /**
+     * 主机名
+     */
     private String hostName;
+    /**
+     * 主机描述
+     */
     private String hostDesc;
+    /**
+     * ip地址
+     */
     private String ipAddr;
+    /**
+     * cpu数量
+     */
     private Integer cpuNum;
+    /**
+     * 内存大小
+     */
     private Long memSize;
+    /**
+     * 主机密码
+     */
     private String pwd;
+    /**
+     * 内存使用情况
+     */
     private Long memUsed;
 
     public String getHid() {

@@ -1,4 +1,4 @@
-//package com.libvirtjava.demo.vm.util.treeStructure;
+//package com.libvirtjava.demo.parmsutil.util.treeStructure;
 //
 //import io.swagger.annotations.ApiModelProperty;
 //

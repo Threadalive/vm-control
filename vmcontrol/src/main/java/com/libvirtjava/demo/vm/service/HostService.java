@@ -2,7 +2,7 @@ package com.libvirtjava.demo.vm.service;
 
 import com.libvirtjava.demo.vm.domain.menu.HostRecord;
 import com.libvirtjava.demo.vm.domain.menu.Node;
-import com.libvirtjava.demo.vm.domain.vm.Host;
+import com.libvirtjava.demo.vm.domain.parmsutil.Host;
 import com.libvirtjava.demo.vm.mapper.HostRecordMapper;
 import com.libvirtjava.demo.vm.mapper.NodeMapper;
 import com.libvirtjava.demo.vm.util.Const;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @Description TODO
+ * @Description 主机操纵服务
  * @Author zhenxing.dong
  * @Date 2019/12/18 10:49
  */
@@ -30,15 +30,27 @@ import java.util.UUID;
 @Lazy
 public class HostService {
 
+    /**
+     * 虚拟机操作服务
+     */
     @Autowired
     private VmService vmService;
 
+    /**
+     * 主机记录操作服务
+     */
     @Autowired
     private HostRecordMapper hostRecordMapper;
 
+    /**
+     * 结点操作
+     */
     @Autowired
     private NodeMapper nodeMapper;
 
+    /**
+     * 日志
+     */
     private static Logger LOGGER = LoggerFactory.getLogger(HostService.class);
 
     /**
@@ -60,17 +72,18 @@ public class HostService {
             host.setDomainList(vmService.getDomainList(connect));
 
         } catch (LibvirtException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
         }
         return host;
     }
 
     /**
      * 根据主机id获取一个主机信息对象
+     *
      * @param hostId 主机id
-     * @return
+     * @return 主机记录
      */
-    public HostRecord getHostMsgByHostId(String hostId){
+    public HostRecord getHostMsgByHostId(String hostId) {
         return hostRecordMapper.getHostRecordByHid(hostId);
     }
 
@@ -80,7 +93,7 @@ public class HostService {
      * @return 主机信息列表
      */
     public List<HostRecord> getAllHostRecords() {
-        List<HostRecord> hostRecords = null;
+        List<HostRecord> hostRecords;
         hostRecords = (List<HostRecord>) hostRecordMapper.findAll();
 
         return hostRecords;
@@ -93,7 +106,7 @@ public class HostService {
      * @return 添加结果
      */
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> addHostRecord(HostRecord hostRecord, String clusterName,Connect connect) {
+    public Map<String, Object> addHostRecord(HostRecord hostRecord, String clusterName, Connect connect) {
 
         try {
             String hostName = connect.getHostName();
@@ -108,7 +121,7 @@ public class HostService {
             hostRecord.setHostName(hostName);
 
         } catch (LibvirtException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
         }
         Map<String, Object> resultMap = new HashMap<>(1);
         Node hostNode = new Node();
@@ -140,6 +153,13 @@ public class HostService {
         return resultMap;
     }
 
+    /**
+     * 删除主机记录
+     *
+     * @param hostRecord 记录对象
+     * @param connect    连接
+     * @return 删除结果
+     */
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> deleteHostRecord(HostRecord hostRecord, Connect connect) {
         Map<String, Object> resultMap = new HashMap<>(1);

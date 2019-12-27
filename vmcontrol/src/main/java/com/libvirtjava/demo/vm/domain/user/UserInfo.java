@@ -5,14 +5,14 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @Description TODO
+ * @Description 用户信息
  * @Author zhenxing.dong
  * @Date 2019/12/20 14:30
  */
 @Entity
 public class UserInfo implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -21,7 +21,7 @@ public class UserInfo implements Serializable {
      */
     private Integer uid;
 
-    @Column(unique =true)
+    @Column(unique = true)
     /**
      * 账号
      */
@@ -50,8 +50,8 @@ public class UserInfo implements Serializable {
      */
     private byte state;
 
-    @ManyToMany(fetch= FetchType.EAGER)
-    @JoinTable(name = "SysUserRole", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "SysUserRole", joinColumns = {@JoinColumn(name = "uid")}, inverseJoinColumns = {@JoinColumn(name = "roleId")})
     /**
      * 一个用户具有多个角色
      */
@@ -120,11 +120,13 @@ public class UserInfo implements Serializable {
     public void setRoleList(List<SysRole> roleList) {
         this.roleList = roleList;
     }
+
     /**
      * 密码盐.
+     *
      * @return
      */
-    public String getCredentialsSalt(){
-        return this.username+this.salt;
+    public String getCredentialsSalt() {
+        return this.username + this.salt;
     }
 }

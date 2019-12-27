@@ -8,7 +8,7 @@ import com.libvirtjava.demo.vm.mapper.NodeMapper;
 import com.libvirtjava.demo.vm.mapper.VmRecordMapper;
 import com.libvirtjava.demo.vm.util.Const;
 import com.libvirtjava.demo.vm.util.MydomainState;
-import com.libvirtjava.demo.vm.domain.vm.VmParms;
+import com.libvirtjava.demo.vm.domain.parmsutil.VmParms;
 import org.libvirt.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +34,29 @@ import java.util.*;
 @Service
 public class VmService {
 
+    /**
+     * 虚拟机记录操作
+     */
     @Autowired
     private VmRecordMapper vmRecordMapper;
 
+    /**
+     * 结点操作
+     */
     @Autowired
     private NodeMapper nodeMapper;
 
+    /**
+     * 主机记录
+     */
     @Autowired
     private HostRecordMapper hostRecordMapper;
 
+    /**
+     * 日志
+     */
     private Logger LOGGER = LoggerFactory.getLogger(VmService.class);
+
     /**
      * 启动虚拟机
      *
@@ -63,10 +76,10 @@ public class VmService {
                 //更新父目录id
                 nodeMapper.updateNode(rHostRecord.getHid(), node.getId());
                 //更新vm状态
-                vmRecordMapper.updateNode("running",vmUuid);
+                vmRecordMapper.updateNode("running", vmUuid);
             }
         } catch (LibvirtException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
             return -1;
         }
         return 0;
@@ -85,15 +98,15 @@ public class VmService {
         try {
             dom = connect.domainLookupByUUIDString(vmUuid);
             dom.destroy();
-            if(dom.isActive() != 1) {
+            if (dom.isActive() != 1) {
                 //更新父目录id
                 Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
                 nodeMapper.updateNode(node.getClusterId(), node.getId());
-                vmRecordMapper.updateNode("nostate",vmUuid);
+                vmRecordMapper.updateNode("nostate", vmUuid);
 
             }
         } catch (Exception e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
             return -1;
         }
         return 0;
@@ -125,6 +138,7 @@ public class VmService {
         }
         return 0;
     }
+
     /**
      * 创建新的虚拟机
      *
@@ -144,41 +158,39 @@ public class VmService {
             vmRecord.setCpuNum(vmParms.getCpu());
             vmRecord.setDiskSize(vmParms.getDiskSize());
             vmRecord.setMemSize(domain.getMaxMemory());
-            vmRecord.setIos(vmParms.getIsopath());
+            vmRecord.setIso(vmParms.getIsopath());
             vmRecord.setVmName(vmParms.getName());
             vmRecord.setStates("nostate");
             vmRecord.setVmDesc(vmParms.getVmDesc());
-
-
             vmRecordMapper.save(vmRecord);
-
             node.setId(UUID.randomUUID().toString());
             node.setVmId(domain.getUUIDString());
             node.setStatus(Node.STATUS_ENABLED);
             node.setNodeName(domain.getName());
             node.setClusterId(vmParms.getClusterToBelong());
             //若未激活
-            if (domain.isActive() == 0){
+            if (domain.isActive() == 0) {
                 node.setParentId(vmParms.getClusterToBelong());
-            }else if (domain.isActive() == 1){
+            } else if (domain.isActive() == 1) {
                 node.setParentId(vmParms.getHostToBelong());
-            }else {
+            } else {
                 LOGGER.error("虚拟机错误");
             }
             nodeMapper.save(node);
 
             return 0;
         } catch (LibvirtException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
         }
         return -1;
     }
 
 
-    public VmRecord getVmRecord(String vmId){
-        VmRecord vmRecord =  vmRecordMapper.getByVmId(vmId);
+    public VmRecord getVmRecord(String vmId) {
+        VmRecord vmRecord = vmRecordMapper.getByVmId(vmId);
         return vmRecord;
     }
+
     /**
      * 创建磁盘
      *
@@ -186,7 +198,7 @@ public class VmService {
      * @param name    磁盘名
      * @param size    磁盘大小
      * @param connect 连接对象
-     * @return
+     * @return 卷路径
      */
     public String createDisk(String sp, String name, long size, Connect connect) {
         try {
@@ -194,7 +206,7 @@ public class VmService {
             StorageVol vol = pool.storageVolCreateXML(String.format(Const.VOLXML, name, size, name), 0);
             return vol.getPath();
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("{}", e);
         }
         return null;
     }
@@ -204,7 +216,7 @@ public class VmService {
      * 显示当前镜像
      *
      * @param connect 连接
-     * @return Map<卷名，卷路径>
+     * @return Map<卷名       ，       卷路径>
      */
     public Map<String, String> listIsoVolumes(Connect connect) {
         Map<String, String> isos = new HashMap(16);
@@ -219,7 +231,7 @@ public class VmService {
                 }
             }
         } catch (LibvirtException e) {
-            LOGGER.error("获取iso卷列表出错",e);
+            LOGGER.error("获取iso卷列表出错", e);
         }
         return isos;
     }
@@ -235,7 +247,7 @@ public class VmService {
         try {
             storagePools = connect.listStoragePools();
         } catch (LibvirtException e) {
-            LOGGER.error("获取存储池字符串列表出错",e);
+            LOGGER.error("获取存储池字符串列表出错", e);
         }
         return storagePools;
     }
@@ -254,17 +266,17 @@ public class VmService {
         domainMap.put("vmName", domain.getName());
         domainMap.put("memory", domain.getMaxMemory());
         domainMap.put("state", MydomainState.values()[domainInfo.state.ordinal()]);
-        domainMap.put("maxCpus",domain.getMaxVcpus());
-        domainMap.put("osType",domain.getOSType());
-        domainMap.put("cpuInfo",domain.getVcpusInfo());
-        domainMap.put("isAlive",domain.isActive());
+        domainMap.put("maxCpus", domain.getMaxVcpus());
+        domainMap.put("osType", domain.getOSType());
+        domainMap.put("cpuInfo", domain.getVcpusInfo());
+        domainMap.put("isAlive", domain.isActive());
 
         //若虚拟机运行中
-        if (1 == (int)domainMap.get("isAlive")){
+        if (1 == (int) domainMap.get("isAlive")) {
             DomainJobInfo domainJobInfo = domain.getJobInfo();
             //虚拟机内存使用率
-            double memUsedRate = (domainJobInfo.getMemTotal()-domainJobInfo.getMemRemaining())/domainJobInfo.getMemTotal();
-            domainMap.put("memUsedRate",memUsedRate);
+            double memUsedRate = (domainJobInfo.getMemTotal() - domainJobInfo.getMemRemaining()) / domainJobInfo.getMemTotal();
+            domainMap.put("memUsedRate", memUsedRate);
         }
 
         return domainMap;
@@ -290,7 +302,7 @@ public class VmService {
                 domains.add(convertDomainInfo(conn.domainLookupByID(acDomId)));
             }
         } catch (LibvirtException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
         }
         return domains;
     }
@@ -336,18 +348,18 @@ public class VmService {
             }
             dom.undefine();
             //删除结点表中的记录
-            Node node = nodeMapper.findByVmIdAndStatus(vmUuid,Node.STATUS_ENABLED);
+            Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
             nodeMapper.delete(node);
 
         } catch (LibvirtException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
             return -1;
         } catch (ParserConfigurationException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
         } catch (SAXException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
         } catch (IOException e) {
-            LOGGER.error("{}",e);
+            LOGGER.error("{}", e);
         }
         return 0;
     }

@@ -5,6 +5,7 @@ package com.libvirtjava.demo.vm.util.config;
  * @Author zhenxing.dong
  * @Date 2019/12/24 00:03
  */
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,7 +34,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("虚拟机管理")
-                .description("vm-control")
+                .description("parmsutil-control")
                 .termsOfServiceUrl("localhost:8080/")
                 .version("1.0")
                 .build();

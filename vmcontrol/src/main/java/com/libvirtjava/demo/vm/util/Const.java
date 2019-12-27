@@ -1,17 +1,29 @@
 package com.libvirtjava.demo.vm.util;
 
 /**
- * @Description TODO
+ * @Description 常量
  * @Author zhenxing.dong
  * @Date 2019/12/19 15:42
  */
 public class Const {
+    /**
+     * 成功
+     */
     public static final String SUCCEED = "succeed";
 
+    /**
+     * 失败
+     */
     public static final String FAIL = "fail";
 
+    /**
+     * 消息
+     */
     public static String MSG = "msg";
 
+    /**
+     * 创建虚拟机使用的xml
+     */
     public static String XMLDESC = "<domain type=\"kvm\">\n" +
             "    <name>%s</name>  <!--虚拟机名称-->\n" +
             "    <memory unit=\"MiB\">%d</memory>   <!--最大内存 -->\n" +
@@ -51,6 +63,9 @@ public class Const {
             "    </devices>\n" +
             "</domain>";
 
+    /**
+     * 卷的xml
+     */
     public static String VOLXML = "<volume>\n" +
             "    <name>%s.img</name>\n" +
             "    <allocation>0</allocation>\n" +

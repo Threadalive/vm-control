@@ -5,7 +5,8 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * @Description TODO
+ * @Description 虚拟机信息记录
+ *
  * @Author zhenxing.dong
  * @Date 2019/12/24 10:05
  */
@@ -13,17 +14,53 @@ import java.io.Serializable;
 public class VmRecord implements Serializable {
 
     @Id
+    /**
+     * 虚拟机id
+     */
     private String vmId;
+    /**
+     * 虚拟机名
+     */
     private String vmName;
+    /**
+     * 虚拟机描述
+     */
     private String vmDesc;
+    /**
+     * 内存大小
+     */
     private Long memSize;
+    /**
+     * 磁盘大小
+     */
     private Long diskSize;
+    /**
+     * 存储路径
+     */
     private String storagePath;
+    /**
+     * cpu个数
+     */
     private Integer cpuNum;
-    private String ios;
+    /**
+     * iso卷
+     */
+    private String iso;
+    /**
+     * 操作系统
+     */
     private String os;
+    /**
+     * 使用的内存
+     */
     private Integer memUsed;
+    /**
+     * 状态
+     */
     private String states;
+    /**
+     * CPU使用
+     */
     private Integer cpuUsed;
 
     public String getVmId() {
@@ -82,12 +119,12 @@ public class VmRecord implements Serializable {
         this.cpuNum = cpuNum;
     }
 
-    public String getIos() {
-        return ios;
+    public String getIso() {
+        return iso;
     }
 
-    public void setIos(String ios) {
-        this.ios = ios;
+    public void setIso(String iso) {
+        this.iso = iso;
     }
 
     public String getOs() {

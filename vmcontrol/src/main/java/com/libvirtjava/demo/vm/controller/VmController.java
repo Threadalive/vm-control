@@ -3,16 +3,14 @@ package com.libvirtjava.demo.vm.controller;
 import com.libvirtjava.demo.vm.domain.menu.HostRecord;
 import com.libvirtjava.demo.vm.domain.menu.Node;
 import com.libvirtjava.demo.vm.domain.menu.VmRecord;
-import com.libvirtjava.demo.vm.mapper.NodeMapper;
 import com.libvirtjava.demo.vm.service.MenuService;
 import com.libvirtjava.demo.vm.util.Const;
 import com.libvirtjava.demo.vm.util.LogUtil;
 import com.libvirtjava.demo.vm.util.SingletonConnection;
-import com.libvirtjava.demo.vm.domain.vm.Host;
-import com.libvirtjava.demo.vm.domain.vm.VmParms;
+import com.libvirtjava.demo.vm.domain.parmsutil.Host;
+import com.libvirtjava.demo.vm.domain.parmsutil.VmParms;
 import com.libvirtjava.demo.vm.service.HostService;
 import com.libvirtjava.demo.vm.service.VmService;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
@@ -20,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Description TODO
+ * @Description 虚拟机控制主要路由
  * @Author zhenxing.dong
  * @Date 2019/12/18 10:39
  */
@@ -83,12 +79,12 @@ public class VmController {
     /**
      * iso卷信息列表
      *
-     * @return 结果集<"isoVolList",Map<卷名，卷路径>>
+     * @return 结果集<" isoVolList " , Map < 卷名 ， 卷路径>>
      */
     @PostMapping(params = "getIsoMsg")
     @ResponseBody
-    public HashMap<String, Map<String,String>> isoMsg() {
-        HashMap<String, Map<String,String>> resultMap = new HashMap<>(1);
+    public HashMap<String, Map<String, String>> isoMsg() {
+        HashMap<String, Map<String, String>> resultMap = new HashMap<>(1);
         resultMap.put("isoVolList", vmService.listIsoVolumes(connect));
         return resultMap;
     }
@@ -96,7 +92,7 @@ public class VmController {
     /**
      * 获取存储池名数组
      *
-     * @return 结果集<"spsNameList",String[name]>
+     * @return 结果集<" spsNameList " , String [ name ]>
      */
     @PostMapping(params = "getStoragePoolsMsg")
     @ResponseBody
@@ -109,7 +105,7 @@ public class VmController {
     /**
      * 启动虚拟机
      *
-     * @param uuid    虚拟机id
+     * @param uuid 虚拟机id
      * @return 0 -1
      */
     @PostMapping(params = "startVm")
@@ -119,7 +115,7 @@ public class VmController {
         int result = vmService.startVm(uuid, connect);
         if (result == 0) {
             resultMap.put(Const.MSG, Const.SUCCEED);
-        }else {
+        } else {
             resultMap.put(Const.MSG, Const.FAIL);
         }
         return resultMap;
@@ -128,7 +124,7 @@ public class VmController {
     /**
      * 关闭虚拟机
      *
-     * @param uuid    虚拟机id
+     * @param uuid 虚拟机id
      * @return 0 -1
      */
     @PostMapping(params = "stopVm")
@@ -139,7 +135,7 @@ public class VmController {
         int result = vmService.stopVm(uuid, connect);
         if (result == 0) {
             resultMap.put(Const.MSG, Const.SUCCEED);
-        }else {
+        } else {
             resultMap.put(Const.MSG, Const.FAIL);
         }
         return resultMap;
@@ -148,7 +144,7 @@ public class VmController {
     /**
      * 重启虚拟机
      *
-     * @param uuid  虚拟机id
+     * @param uuid 虚拟机id
      * @return 0 -1
      */
     @PostMapping(params = "restartVm")
@@ -159,7 +155,7 @@ public class VmController {
         int result = vmService.restartVm(uuid, connect);
         if (result == 0) {
             resultMap.put(Const.MSG, Const.SUCCEED);
-        }else {
+        } else {
             resultMap.put(Const.MSG, Const.FAIL);
         }
         return resultMap;
@@ -177,7 +173,7 @@ public class VmController {
         int result = vmService.createVm(vmParms, connect);
         if (result == 0) {
             resultMap.put(Const.MSG, Const.SUCCEED);
-        }else {
+        } else {
             resultMap.put(Const.MSG, Const.FAIL);
         }
         return resultMap;
@@ -199,7 +195,7 @@ public class VmController {
 
         if (result == 0) {
             resultMap.put(Const.MSG, Const.SUCCEED);
-        }else {
+        } else {
             resultMap.put(Const.MSG, Const.FAIL);
         }
         return resultMap;
@@ -225,7 +221,6 @@ public class VmController {
 
     /**
      * 关闭连接
-     *
      */
     @PostMapping(params = "closeConn")
     @ResponseBody
@@ -259,20 +254,20 @@ public class VmController {
         } else {
             Domain domain = null;
             //结点为vm
-            if (null != node.getVmId()){
+            if (null != node.getVmId()) {
                 //获取vm信息
                 nodeList = null;
                 try {
                     //根据uuid查询对应domain
                     domain = connect.domainLookupByUUIDString(node.getVmId());
-                    Map<String,Object> domainMap = vmService.convertDomainInfo(domain);
+                    Map<String, Object> domainMap = vmService.convertDomainInfo(domain);
                     VmRecord vmRecord = vmService.getVmRecord(node.getVmId());
-                    domainMap.put("vmMsginDB",vmRecord);
-                    resultMap.put("vmMsg",domainMap);
+                    domainMap.put("vmMsginDB", vmRecord);
+                    resultMap.put("vmMsg", domainMap);
                 } catch (LibvirtException e) {
-                    LOGGER.error("{}",e);
+                    LOGGER.error("{}", e);
                 }
-            }else {
+            } else {
                 //结点为主机,则获取他的从属vm结点
                 nodeList = menuService.getVmList(node);
             }
@@ -283,32 +278,35 @@ public class VmController {
 
     /**
      * 删除集群
+     *
      * @param clusterNode 要删除的集群结点
      * @return 删除结果
      */
     @PostMapping(params = "deleteCluster")
     @ResponseBody
     public Map<String, Object> deleteCluster(Node clusterNode) {
-        LOGGER.info("删除集群结点",clusterNode.getNodeName());
+        LOGGER.info("删除集群结点", clusterNode.getNodeName());
 
-        return menuService.deleteCluster(clusterNode,connect);
+        return menuService.deleteCluster(clusterNode, connect);
     }
 
     /**
      * 添加集群
+     *
      * @param clusterNode 要添加的集群结点
      * @return 添加结果
      */
     @PostMapping(params = "addCluster")
     @ResponseBody
     public Map<String, Object> addCluster(Node clusterNode) {
-        LOGGER.info("添加集群结点",clusterNode.getNodeName());
+        LOGGER.info("添加集群结点", clusterNode.getNodeName());
 
         return menuService.addCluster(clusterNode);
     }
 
     /**
      * 展示全部集群结点
+     *
      * @return 集群结点列表
      */
     @PostMapping(params = "listClusterNode")
@@ -319,7 +317,7 @@ public class VmController {
 
         List<Node> nodeList = menuService.listClusterNode();
 
-        resultMap.put("clusterNodeList",nodeList);
+        resultMap.put("clusterNodeList", nodeList);
 
         return resultMap;
     }
@@ -327,6 +325,7 @@ public class VmController {
 
     /**
      * 展示全部主机结点
+     *
      * @return 集群结点列表
      */
     @PostMapping(params = "listHostNode")
@@ -337,13 +336,14 @@ public class VmController {
 
         List<Node> nodeList = menuService.listHostNode();
 
-        resultMap.put("clusterNodeList",nodeList);
+        resultMap.put("clusterNodeList", nodeList);
 
         return resultMap;
     }
 
     /**
      * 展示全部主机结点
+     *
      * @return 集群结点列表
      */
     @PostMapping(params = "listVmNode")
@@ -354,13 +354,14 @@ public class VmController {
 
         List<Node> nodeList = menuService.getAllVmList();
 
-        resultMap.put("vmNodeList",nodeList);
+        resultMap.put("vmNodeList", nodeList);
 
         return resultMap;
     }
 
     /**
      * 展示全部主机结点
+     *
      * @return 集群结点
      */
     @PostMapping(params = "getVmRecordMsg")
@@ -371,21 +372,22 @@ public class VmController {
 
         VmRecord vmRecord = vmService.getVmRecord(vmId);
 
-        resultMap.put("vmMsg",vmRecord);
+        resultMap.put("vmMsg", vmRecord);
 
         return resultMap;
     }
 
     /**
      * 添加主机记录
+     *
      * @param hostRecord 要添加的集群结点
      * @return 添加结果
      */
     @PostMapping(params = "addHost")
     @ResponseBody
-    public Map<String, Object> addHost(HostRecord hostRecord,String clusterName) {
-        LOGGER.info("添加主机记录",hostRecord.getHostName());
-        if (null != connect){
+    public Map<String, Object> addHost(HostRecord hostRecord, String clusterName) {
+        LOGGER.info("添加主机记录", hostRecord.getHostName());
+        if (null != connect) {
             //关闭现有连接
             closeConn();
         }
@@ -394,24 +396,26 @@ public class VmController {
         //获取连接
         SingletonConnection.getInstance(connect);
 
-        return hostService.addHostRecord(hostRecord,clusterName,connect);
+        return hostService.addHostRecord(hostRecord, clusterName, connect);
     }
 
     /**
      * 删除主机记录
+     *
      * @param hostRecord 要删除的集群结点
      * @return 删除结果
      */
     @PostMapping(params = "deleteHost")
     @ResponseBody
     public Map<String, Object> deleteHostRecord(HostRecord hostRecord) {
-        LOGGER.info("删除主机记录",hostRecord.getHostName());
+        LOGGER.info("删除主机记录", hostRecord.getHostName());
 
-        return hostService.deleteHostRecord(hostRecord,connect);
+        return hostService.deleteHostRecord(hostRecord, connect);
     }
 
     /**
      * 获取当前连接主机信息
+     *
      * @return 当前连接主机信息
      */
     @PostMapping(params = "getCurrentHostMsg")
@@ -420,12 +424,13 @@ public class VmController {
         Map<String, Object> resultMap = new HashMap<>(1);
 
         Host host = hostService.getHost(connect);
-        resultMap.put(Const.MSG,host);
+        resultMap.put(Const.MSG, host);
         return resultMap;
     }
 
     /**
      * 获取当前连接主机信息
+     *
      * @return 当前连接主机信息
      */
     @PostMapping(params = "getHostMsgByHostId")
@@ -434,12 +439,13 @@ public class VmController {
         Map<String, Object> resultMap = new HashMap<>(1);
 
         HostRecord host = hostService.getHostMsgByHostId(hostId);
-        resultMap.put(Const.MSG,host);
+        resultMap.put(Const.MSG, host);
         return resultMap;
     }
 
     /**
      * 获取记录的主机列表信息
+     *
      * @return 记录的主机列表
      */
     @PostMapping(params = "getHostMsgList")
@@ -447,17 +453,17 @@ public class VmController {
     public Map<String, Object> getHostMsgList() {
         Map<String, Object> resultMap = new HashMap<>(1);
         List<HostRecord> hosts = hostService.getAllHostRecords();
-        resultMap.put(Const.MSG,hosts);
+        resultMap.put(Const.MSG, hosts);
         return resultMap;
     }
 
     @PostMapping(params = "getLogMsg")
     @ResponseBody
-    public Map<String,String> getLogMsg(){
+    public Map<String, String> getLogMsg() {
         Map<String, String> resultMap = new HashMap<>(1);
         String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String logMsg= LogUtil.readFileByLines("/home/mxinx/Documents/vmControlLog/log."+date+".0.log");
-        resultMap.put(Const.MSG,logMsg);
+        String logMsg = LogUtil.readFileByLines("/home/mxinx/Documents/vmControlLog/log." + date + ".0.log");
+        resultMap.put(Const.MSG, logMsg);
         return resultMap;
     }
 }

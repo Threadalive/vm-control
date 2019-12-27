@@ -14,7 +14,8 @@ public class SysPermission implements Serializable {
     /**
      * 主键
      */
-    @Id@GeneratedValue
+    @Id
+    @GeneratedValue
     private Integer id;
 
     /**
@@ -22,7 +23,7 @@ public class SysPermission implements Serializable {
      */
     private String name;
 
-    @Column(columnDefinition="enum('menu','button')")
+    @Column(columnDefinition = "enum('menu','button')")
 
     /**
      * 资源类型，[menu|button]
@@ -52,7 +53,7 @@ public class SysPermission implements Serializable {
     private Boolean available = Boolean.FALSE;
 
     @ManyToMany
-    @JoinTable(name="SysRolePermission",joinColumns={@JoinColumn(name="permissionId")},inverseJoinColumns={@JoinColumn(name="roleId")})
+    @JoinTable(name = "SysRolePermission", joinColumns = {@JoinColumn(name = "permissionId")}, inverseJoinColumns = {@JoinColumn(name = "roleId")})
     private List<SysRole> roles;
 
     public Integer getId() {

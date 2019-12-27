@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * @Description TODO
+ * @Description 登录校验过滤
  * @Author zhenxing.dong
  * @Date 2019/12/25 21:24
  */
@@ -97,8 +97,8 @@ public class CustomerAuthenticatingFilter extends AuthenticatingFilter {
         } else if (excName.equals(DisabledAccountException.class.getName())) {
             LOGGER.info("用户锁定");
             json.put(Const.MSG, "userLocked");
-        }else {
-            json.put(Const.MSG,Const.FAIL);
+        } else {
+            json.put(Const.MSG, Const.FAIL);
         }
         out.println(json);
         out.flush();

@@ -18,7 +18,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @Description TODO
+ * @Description 自定义Realm
  * @Author zhenxing.dong
  * @Date 2019/12/20 16:12
  */
@@ -39,17 +39,22 @@ public class MyShiroRealm extends AuthorizingRealm {
      */
     private Integer MAX_RETRY_COUNT = 3;
 
+    /**
+     * 日志
+     */
     private static Logger LOGGER = LoggerFactory.getLogger(MyShiroRealm.class);
 
+    /**
+     * 用户服务
+     */
     @Autowired
     private UserInfoService userInfoService;
 
+    /**
+     * redis操作模板
+     */
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-//    @Override
-//    public String getName() {
-//        return "myRealm";
-//    }
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -62,29 +67,29 @@ public class MyShiroRealm extends AuthorizingRealm {
         //获取传入的账号密码
         String userName = token.getPrincipal().toString();
 
-        String pwd = new String((char[])token.getCredentials());
+        String pwd = new String((char[]) token.getCredentials());
 
-        ValueOperations<String,String> opsForValue = stringRedisTemplate.opsForValue();
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
 
         //尝试次数+1
-        opsForValue.increment(SHIRO_LOGIN_COUNT+userName,1);
+        opsForValue.increment(SHIRO_LOGIN_COUNT + userName, 1);
 
         //判断次数
-        if(Integer.parseInt(opsForValue.get(SHIRO_LOGIN_COUNT+userName)) >= MAX_RETRY_COUNT){
+        if (Integer.parseInt(opsForValue.get(SHIRO_LOGIN_COUNT + userName)) >= MAX_RETRY_COUNT) {
             //锁定，5分钟后过期
-            opsForValue.set(SHIRO_IS_LOCK+userName, "LOCK");
-            stringRedisTemplate.expire(SHIRO_IS_LOCK+userName, 5, TimeUnit.MINUTES);
-            stringRedisTemplate.expire(SHIRO_LOGIN_COUNT+userName, 5, TimeUnit.MINUTES);
+            opsForValue.set(SHIRO_IS_LOCK + userName, "LOCK");
+            stringRedisTemplate.expire(SHIRO_IS_LOCK + userName, 5, TimeUnit.MINUTES);
+            stringRedisTemplate.expire(SHIRO_LOGIN_COUNT + userName, 5, TimeUnit.MINUTES);
         }
-        if ("LOCK".equals(opsForValue.get(SHIRO_IS_LOCK+userName))){
+        if ("LOCK".equals(opsForValue.get(SHIRO_IS_LOCK + userName))) {
             throw new DisabledAccountException("由于密码输入错误次数大于3次，5分钟后再次尝试！");
         }
 
         UserInfo userInfo = userInfoService.getUserInfo(userName);
 
-        if(userInfo == null){
+        if (userInfo == null) {
             return null;
-        }else if("2".equals(userInfo.getState())){
+        } else if ("2".equals(userInfo.getState())) {
             /**
              * 如果用户的status为禁用。那么就抛出DisabledAccountException
              */
@@ -93,13 +98,13 @@ public class MyShiroRealm extends AuthorizingRealm {
         if (!userName.equals(userInfo.getUsername())) {
             //如果用户名错误
             throw new UnknownAccountException();
-        }else if (!pwd.equals(userInfo.getPassword())) {
+        } else if (!pwd.equals(userInfo.getPassword())) {
             //如果密码错误
             LOGGER.info(pwd);
             throw new IncorrectCredentialsException();
-        }else {
+        } else {
             //清除登录次数记录
-            opsForValue.set(SHIRO_LOGIN_COUNT+userName, "0");
+            opsForValue.set(SHIRO_LOGIN_COUNT + userName, "0");
         }
 
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
@@ -121,7 +126,7 @@ public class MyShiroRealm extends AuthorizingRealm {
         //权限信息
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 
-        UserInfo userInfo  = null;
+        UserInfo userInfo = null;
         try {
             String userName = (String) principals.getPrimaryPrincipal();
             userInfo = userInfoService.getUserInfo(userName);
@@ -129,16 +134,16 @@ public class MyShiroRealm extends AuthorizingRealm {
             e.printStackTrace();
         }
 
-        for(SysRole role:userInfo.getRoleList()){
+        for (SysRole role : userInfo.getRoleList()) {
             //添加角色信息
             authorizationInfo.addRole(role.getRole());
             LOGGER.info(role.getRole());
-            for(SysPermission p:role.getPermissions()){
+            for (SysPermission p : role.getPermissions()) {
                 //添加权限信息
                 authorizationInfo.addStringPermission(p.getPermission());
                 LOGGER.info(p.getPermission());
             }
         }
-            return authorizationInfo;
+        return authorizationInfo;
     }
 }

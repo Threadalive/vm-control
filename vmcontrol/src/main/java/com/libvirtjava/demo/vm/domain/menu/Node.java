@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * @Description TODO
+ * @Description 集群、主机、虚拟机结点
  * @Author zhenxing.dong
  * @Date 2019/12/24 00:07
  */
@@ -15,17 +15,32 @@ import java.io.Serializable;
 @Table(name = "node")
 public class Node implements Serializable {
 
+    /**
+     * 禁用
+     */
     public static final int STATUS_DISABLED = 0;
 
+    /**
+     * 启用
+     */
     public static final int STATUS_ENABLED = 1;
 
 
-    @Column(nullable = false, columnDefinition="varchar(255) COMMENT '唯一标识'")
+    @Column(nullable = false, columnDefinition = "varchar(255) COMMENT '唯一标识'")
     @Id
+    /**
+     * 结点id
+     */
     private String id;
 
+    /**
+     * 虚拟机id
+     */
     private String vmId;
 
+    /**
+     * 主机id
+     */
     private String hostId;
 
     /**
@@ -33,18 +48,29 @@ public class Node implements Serializable {
      */
     private String clusterId;
 
+    /**
+     * 结点名
+     */
     @Column(nullable = false, columnDefinition = "varchar(255) COMMENT '结点名称'")
     private String nodeName;
 
+    /**
+     * 结点描述
+     */
     @Column(nullable = false, columnDefinition = "varchar(1000) COMMENT '结点描述'")
     private String nodeDesc;
 
+    /**
+     * 结点状态
+     */
     @Column(nullable = false, columnDefinition = "tinyint(1) DEFAULT 1 COMMENT '状态（1：可用，0：禁用）'")
     private Integer status;
 
+    /**
+     * 父节点id
+     */
     @Column(columnDefinition = "varchar(255) COMMENT '父ID'")
     private String parentId;
-
 
 
 //    private List<Node> childrens;

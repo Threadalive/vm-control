@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @Description TODO
+ * @Description 用户服务
  * @Author zhenxing.dong
  * @Date 2019/12/20 16:26
  */
@@ -18,19 +18,21 @@ public class UserInfoService {
 
     /**
      * 获取用户信息
+     *
      * @param userName 用户名
      * @return 用户信息
      */
-    public UserInfo getUserInfo(String userName){
+    public UserInfo getUserInfo(String userName) {
         return userInfoMapper.getUserInfoByUsername(userName);
     }
 
     /**
      * 获取用户信息
+     *
      * @param userId 用户id
      * @return 用户信息
      */
-    public UserInfo getUserInfoById(Integer userId){
+    public UserInfo getUserInfoById(Integer userId) {
         return userInfoMapper.getUserInfoByUid(userId);
     }
 

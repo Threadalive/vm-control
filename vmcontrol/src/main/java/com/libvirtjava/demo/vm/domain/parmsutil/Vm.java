@@ -1,4 +1,4 @@
-package com.libvirtjava.demo.vm.domain.vm;
+package com.libvirtjava.demo.vm.domain.parmsutil;
 
 /**
  * @Description TODO

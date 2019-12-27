@@ -8,10 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Author zhenxing.dong
  * @Date 2019/12/20 16:27
  */
-public interface UserInfoMapper extends JpaRepository<UserInfo,Integer> {
+public interface UserInfoMapper extends JpaRepository<UserInfo, Integer> {
 
     /**
      * 查询用户信息
+     *
      * @param userName 用户名
      * @return 用户实体
      */

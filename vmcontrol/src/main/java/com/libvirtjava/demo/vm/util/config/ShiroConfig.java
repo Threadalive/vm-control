@@ -19,17 +19,21 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @Description TODO
+ * @Description Shiro配置
  * @Author zhenxing.dong
  * @Date 2019/12/20 16:07
  */
 @Configuration
 public class ShiroConfig {
 
+    /**
+     * 日志
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ShiroConfig.class);
 
     /**
      * 设置过滤器工厂
+     *
      * @param securityManager 安全管理器
      * @return 过滤器工厂
      */
@@ -43,11 +47,11 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
         //注入自定义的过滤器
-        Map<String, Filter> map = new LinkedHashMap<String,Filter>();
-        map.put("authc",getFormAuthenticationFilter());
+        Map<String, Filter> map = new LinkedHashMap<String, Filter>();
+        map.put("authc", getFormAuthenticationFilter());
 
         //配置过滤路径
-        Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 
         // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/static/**", "anon");
@@ -65,7 +69,7 @@ public class ShiroConfig {
 
 
         //未授权界面;
-//        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+        //shiroFilterFactoryBean.setUnauthorizedUrl("/403");
 
         shiroFilterFactoryBean.setFilters(map);
 
@@ -76,10 +80,11 @@ public class ShiroConfig {
 
     /**
      * md5加密
+     *
      * @return
      */
     @Bean
-    public HashedCredentialsMatcher hashedCredentialsMatcher(){
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
         //加密方式
         hashedCredentialsMatcher.setHashAlgorithmName("md5");
@@ -89,20 +94,21 @@ public class ShiroConfig {
     }
 
     /**
-     *  开启shiro aop注解支持.
-     *  使用代理方式;所以需要开启代码支持;
+     * 开启shiro aop注解支持.
+     * 使用代理方式;所以需要开启代码支持;
+     *
      * @param securityManager 安全管理器
      * @return
      */
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager){
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
 
     @Bean
-    public MyShiroRealm myShiroRealm(){
+    public MyShiroRealm myShiroRealm() {
         MyShiroRealm myShiroRealm = new MyShiroRealm();
         // 将md5密码比对器传给realm
 //        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
@@ -126,13 +132,13 @@ public class ShiroConfig {
         return defaultAAP;
     }
 
-    @Bean(name="simpleMappingExceptionResolver")
+    @Bean(name = "simpleMappingExceptionResolver")
     public SimpleMappingExceptionResolver createSimpleMappingExceptionResolver() {
         SimpleMappingExceptionResolver r = new SimpleMappingExceptionResolver();
         Properties mappings = new Properties();
         //数据库异常处理
         mappings.setProperty("DatabaseException", "databaseError");
-        mappings.setProperty("UnauthorizedException","403");
+        mappings.setProperty("UnauthorizedException", "403");
         // None by default
         r.setExceptionMappings(mappings);
         // No default
@@ -145,7 +151,7 @@ public class ShiroConfig {
     }
 
     @Bean
-    CustomFormAuthenticationFilter getFormAuthenticationFilter(){
+    CustomFormAuthenticationFilter getFormAuthenticationFilter() {
 
         CustomFormAuthenticationFilter authenticating = new CustomFormAuthenticationFilter();
 

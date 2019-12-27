@@ -5,12 +5,11 @@ import org.springframework.data.repository.CrudRepository;
 
 
 /**
- *
- * @param
- * @return
- * @author zhenxing.dong
+ * @Description TODO
+ * @Author zhenxing.dong
+ * @Date 2019/12/20 16:27
  */
-public interface HostRecordMapper extends CrudRepository<HostRecord,String> {
+public interface HostRecordMapper extends CrudRepository<HostRecord, String> {
     HostRecord findFirstByOrderByHid();
 
     HostRecord getHostRecordByHid(String hid);
