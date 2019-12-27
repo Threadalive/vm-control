@@ -41,7 +41,7 @@ public class MenuService {
 
     public List<Node> getVmList(Node node){
         List<Node> nodeList = new ArrayList<>();
-            nodeList = nodeMapper.findByParentIdAndStatus(node.getParentId(),Node.STATUS_ENABLED);
+            nodeList = nodeMapper.findByParentIdAndStatus(node.getId(),Node.STATUS_ENABLED);
         return nodeList;
     }
 
