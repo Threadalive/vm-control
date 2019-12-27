@@ -61,7 +61,7 @@ public class VmService {
                 Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
                 HostRecord rHostRecord = hostRecordMapper.findFirstByOrderByHid();
                 //更新父目录id
-                nodeMapper.update(rHostRecord.getHid(), node.getId());
+                nodeMapper.updateNode(rHostRecord.getHid(), node.getId());
             }
         } catch (LibvirtException e) {
             e.printStackTrace();
@@ -85,7 +85,7 @@ public class VmService {
             if(dom.isActive() != 1) {
                 //更新父目录id
                 Node node = nodeMapper.findByVmIdAndStatus(vmUuid, Node.STATUS_ENABLED);
-                nodeMapper.update(node.getClusterId(), node.getId());
+                nodeMapper.updateNode(node.getClusterId(), node.getId());
             }
         } catch (LibvirtException e) {
             LOGGER.error("{}",e);

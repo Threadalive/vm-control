@@ -12,6 +12,7 @@ import com.libvirtjava.demo.vm.domain.vm.Host;
 import com.libvirtjava.demo.vm.domain.vm.VmParms;
 import com.libvirtjava.demo.vm.service.HostService;
 import com.libvirtjava.demo.vm.service.VmService;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
@@ -64,11 +65,11 @@ public class VmController {
     @Autowired
     VmService vmService;
 
-
-    /**
-     * @param modelMap 模型对象
-     * @return 返回主机信息页面
-     */
+//
+//    /**
+//     * @param modelMap 模型对象
+//     * @return 返回主机信息页面
+//     */
 //    @RequiresRoles("admin")
 //    @GetMapping(params = "host")
 //    public String host(ModelMap modelMap) {
@@ -361,7 +362,7 @@ public class VmController {
 
     /**
      * 展示全部主机结点
-     * @return 集群结点列表
+     * @return 集群结点
      */
     @PostMapping(params = "getVmRecordMsg")
     @ResponseBody

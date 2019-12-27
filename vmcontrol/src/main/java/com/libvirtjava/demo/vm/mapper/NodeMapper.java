@@ -33,6 +33,6 @@ public interface NodeMapper extends JpaRepository<Node,String> {
     List<Node> getByVmIdNotNull();
 
     @Modifying
-    @Query("UPDATE Node n set n.parentId =: parentId where n.id =: id")
-    void update(@Param(value = "parentId") String parentId, @Param(value = "id")String id);
+    @Query("UPDATE Node n set n.parentId = :parentId where n.id = :id")
+    void updateNode(String parentId, String id);
 }
