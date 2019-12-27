@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -451,7 +453,8 @@ public class VmController {
     @ResponseBody
     public Map<String,String> getLogMsg(){
         Map<String, String> resultMap = new HashMap<>(1);
-        String logMsg= LogUtil.readFileByLines("F:\\Desktop\\新建文本文档.txt");
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String logMsg= LogUtil.readFileByLines("/home/mxinx/Documents/vmControlLog/log."+date+".0.log");
         resultMap.put(Const.MSG,logMsg);
         return resultMap;
     }
