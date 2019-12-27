@@ -62,9 +62,11 @@ public class VmService {
                 HostRecord rHostRecord = hostRecordMapper.findFirstByOrderByHid();
                 //更新父目录id
                 nodeMapper.updateNode(rHostRecord.getHid(), node.getId());
+                //更新vm状态
+                vmRecordMapper.updateNode("running",vmUuid);
             }
         } catch (LibvirtException e) {
-            e.printStackTrace();
+            LOGGER.error("{}",e);
             return -1;
         }
         return 0;
