@@ -2,6 +2,7 @@ package com.libvirtjava.demo.vm.controller;
 
 import com.libvirtjava.demo.vm.domain.menu.HostRecord;
 import com.libvirtjava.demo.vm.domain.menu.Node;
+import com.libvirtjava.demo.vm.domain.menu.VmRecord;
 import com.libvirtjava.demo.vm.mapper.NodeMapper;
 import com.libvirtjava.demo.vm.service.MenuService;
 import com.libvirtjava.demo.vm.util.Const;
@@ -353,6 +354,24 @@ public class VmController {
 
         return resultMap;
     }
+
+    /**
+     * 展示全部主机结点
+     * @return 集群结点列表
+     */
+    @PostMapping(params = "getVmRecordMsg")
+    @ResponseBody
+    public Map<String, Object> getVmRecordMsg(String vmId) {
+        LOGGER.info("获取全部虚拟机结点");
+        Map<String, Object> resultMap = new HashMap<>(1);
+
+        VmRecord vmRecord = vmService.getVmRecord(vmId);
+
+        resultMap.put("vmMsg",vmRecord);
+
+        return resultMap;
+    }
+
     /**
      * 添加主机记录
      * @param hostRecord 要添加的集群结点

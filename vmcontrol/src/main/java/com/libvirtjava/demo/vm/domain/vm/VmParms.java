@@ -15,6 +15,15 @@ public class VmParms {
     String sp;
     String clusterToBelong;
     String hostToBelong;
+    String vmDesc;
+
+    public String getVmDesc() {
+        return vmDesc;
+    }
+
+    public void setVmDesc(String vmDesc) {
+        this.vmDesc = vmDesc;
+    }
 
     public String getHostToBelong() {
         return hostToBelong;

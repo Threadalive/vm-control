@@ -142,6 +142,8 @@ public class VmService {
             vmRecord.setIos(vmParms.getIsopath());
             vmRecord.setVmName(vmParms.getName());
             vmRecord.setStates(1);
+            vmRecord.setVmDesc(vmParms.getVmDesc());
+
 
             vmRecordMapper.save(vmRecord);
 
@@ -167,6 +169,10 @@ public class VmService {
         return -1;
     }
 
+
+    public VmRecord getVmRecord(String vmId){
+        return vmRecordMapper.getOne(vmId);
+    }
     /**
      * 创建磁盘
      *
